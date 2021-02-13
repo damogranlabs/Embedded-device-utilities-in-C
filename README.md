@@ -31,13 +31,24 @@ This is an Arduino-inspired library for embedded devices, that allows user to se
 * User only need to implement UART 'send byte(s)' low layer call, while formatting is done by this library.
 
 # LCD
-_lcd.h, lcd.c, lcd\_user.h, lcd\_user.c_
+_lcd.h, lcd.c, lcd\_user.h, lcd\_user.c_  
 This is a generic LCD HD44780-based library that supports:
 * printing strings
 * printing numbers (integers, floats)
 * printing strings in a specific window (optional scrolling)
 * creating and printing custom characters
 * controlling of LCD settings like: display on/off, cursor blinking on/off, scrolling, clearing
+
+# ROTARY ENCODER
+_rot\_enc.h, rot\_enc.c, rot\_enc\_user.h, rot\_enc\_user.c_  
+This is a generic, single-interrupt based library to handle basic three-pin (2 GPIO + common pin) rotary encoder.
+Library supports: 
+* reading difference from the last read (last `get` function call)
+* reading absolute value from the last `reset` action
+* setting count direction
+* reset count value
+NOTE: User must manually implement interrupt routine (and set irq priority) on rising & falling edge on one rotary encoder pin, and call `rot_enc_update()` function. 
+This ensure library to register all rotary encoder interactions, and properly debounce any glitches so that the count is a valid number.
 
 ## Examples (STM32)
 See examples in [STM32 USB Shortcutter project](https://github.com/damogranlabs/USB-Shortcutter-based-on-STM32-and-AHK-script). 
