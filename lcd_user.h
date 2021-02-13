@@ -14,13 +14,13 @@
 #define __LCD_USER_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "stm32f0xx.h"
+#include "stm32f0xx_ll_gpio.h"
 
 // define GPIO port/pin object type
 #define LCD_GPIO_PORT_TYPE GPIO_TypeDef
 #define LCD_GPIO_PIN_TYPE uint32_t
-#define LCD_GPIO_PIN_STATE_TYPE GPIO_PinState
 
 #define LCD_D4_GPIO_Port GPIOB
 #define LCD_D4_Pin GPIO_PIN_4
@@ -43,6 +43,6 @@ void lcd_delay_us(uint32_t uSec);
 void lcd_delay_ms(uint32_t mSec);
 
 void lcd_init_pins(void);
-void lcd_write_pin(LCD_GPIO_PORT_TYPE *port, LCD_GPIO_PIN_TYPE pin, LCD_GPIO_PIN_STATE_TYPE state);
+void lcd_write_pin(LCD_GPIO_PORT_TYPE *port, LCD_GPIO_PIN_TYPE pin, bool state);
 
 #endif /* __LCD_H */

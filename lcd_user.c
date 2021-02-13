@@ -20,7 +20,7 @@
  * @note For core clock frequency above 1MHz. Doesn't generate precise us delay - only for simple purposes.
  */
 void lcd_delay_us(uint32_t uSec) {
-  uSec *= (SystemCoreClock / 1000000) / 5;
+  uSec *= (SystemCoreClock / 1000000) / 6;
 
   while (uSec--) {
 
@@ -35,7 +35,6 @@ void lcd_delay_us(uint32_t uSec) {
 void lcd_delay_ms(uint32_t mSec) {
   HAL_Delay(mSec);
 }
-
 
 /**
  * @brief Microcontroller-specific implementation of GPIO initialization.
@@ -52,7 +51,12 @@ void lcd_init_pins(void) {
  * @param GPIO new output state
  * @retval None
  */
-void lcd_write_pin(LCD_GPIO_PORT_TYPE *port, LCD_GPIO_PIN_TYPE pin, LCD_GPIO_PIN_STATE_TYPE state) {
-  HAL_GPIO_WritePin(port, pin, state);
+void lcd_write_pin(LCD_GPIO_PORT_TYPE *port, LCD_GPIO_PIN_TYPE pin, bool state) {
+  if (state) {
+    LL_GPIO_SetOutputPin(port, pin);
+  }
+  else {
+    LL_GPIO_ResetOutputPin(port, pin);
+  }
 }
 

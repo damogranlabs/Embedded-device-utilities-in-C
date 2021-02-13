@@ -349,7 +349,7 @@ void LCD_PutCustom(uint8_t y, uint8_t x, uint8_t location) {
 /* Private functions */
 void _lcd_send_command(uint8_t cmd) {
   /* Command mode */
-  lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
+  lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, false);
 
   /* High nibble */
   _lcd_send_command_4_bit(cmd >> 4);
@@ -359,7 +359,7 @@ void _lcd_send_command(uint8_t cmd) {
 
 void _lcd_send_data(uint8_t data) {
   /* Data mode */
-  lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, (LCD_GPIO_PIN_STATE_TYPE) 1);
+  lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, true);
 
   /* High nibble */
   _lcd_send_command_4_bit(data >> 4);
@@ -369,10 +369,10 @@ void _lcd_send_data(uint8_t data) {
 
 void _lcd_send_command_4_bit(uint8_t cmd) {
   /* Set output port */
-  lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, (LCD_GPIO_PIN_STATE_TYPE) (cmd & 0x08));
-  lcd_write_pin(LCD_D6_GPIO_Port, LCD_D6_Pin, (LCD_GPIO_PIN_STATE_TYPE) (cmd & 0x04));
-  lcd_write_pin(LCD_D5_GPIO_Port, LCD_D5_Pin, (LCD_GPIO_PIN_STATE_TYPE) (cmd & 0x02));
-  lcd_write_pin(LCD_D4_GPIO_Port, LCD_D4_Pin, (LCD_GPIO_PIN_STATE_TYPE) (cmd & 0x01));
+  lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, (bool) (cmd & 0x08));
+  lcd_write_pin(LCD_D6_GPIO_Port, LCD_D6_Pin, (bool) (cmd & 0x04));
+  lcd_write_pin(LCD_D5_GPIO_Port, LCD_D5_Pin, (bool) (cmd & 0x02));
+  lcd_write_pin(LCD_D4_GPIO_Port, LCD_D4_Pin, (bool) (cmd & 0x01));
 
   _lcd_enable_pulse();
 }
@@ -395,19 +395,19 @@ void _lcd_cursor_set(uint8_t row, uint8_t col) {
 
 void _lcd_init_pins(void) {
   // set GPIO initial state
-  lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
-  lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
+  lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, false);
+  lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, false);
 
-  lcd_write_pin(LCD_D4_GPIO_Port, LCD_D4_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
-  lcd_write_pin(LCD_D5_GPIO_Port, LCD_D5_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
-  lcd_write_pin(LCD_D6_GPIO_Port, LCD_D6_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
-  lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
+  lcd_write_pin(LCD_D4_GPIO_Port, LCD_D4_Pin, false);
+  lcd_write_pin(LCD_D5_GPIO_Port, LCD_D5_Pin, false);
+  lcd_write_pin(LCD_D6_GPIO_Port, LCD_D6_Pin, false);
+  lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, false);
 }
 
 void _lcd_enable_pulse(void) {
-  lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, (LCD_GPIO_PIN_STATE_TYPE) 1);
+  lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, true);
   lcd_delay_us(2);
 
-  lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, (LCD_GPIO_PIN_STATE_TYPE) 0);
+  lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, false);
   lcd_delay_us(100);
 }

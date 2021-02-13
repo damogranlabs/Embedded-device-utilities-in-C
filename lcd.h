@@ -14,6 +14,7 @@
 #define __LCD_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 void LCD_Init(uint8_t rows, uint8_t cols);
 void LCD_PrintString(uint8_t y, uint8_t x, char* str);
