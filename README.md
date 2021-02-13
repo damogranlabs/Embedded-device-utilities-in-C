@@ -30,5 +30,14 @@ This is an Arduino-inspired library for embedded devices, that allows user to se
 * new-line characters
 * User only need to implement UART 'send byte(s)' low layer call, while formatting is done by this library.
 
+# LCD
+_lcd.h, lcd.c, lcd\_user.h, lcd\_user.c_
+This is a generic LCD HD44780-based library that supports:
+* printing strings
+* printing numbers (integers, floats)
+* printing strings in a specific window (optional scrolling)
+* creating and printing custom characters
+* controlling of LCD settings like: display on/off, cursor blinking on/off, scrolling, clearing
+
 ## Examples (STM32)
 See examples in [STM32 USB Shortcutter project](https://github.com/damogranlabs/USB-Shortcutter-based-on-STM32-and-AHK-script). 
