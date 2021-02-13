@@ -7,7 +7,7 @@
  * @author  Domen Jurkovic, Damogran Labs
  * @source  http://damogranlabs.com/
  *          https://github.com/damogranlabs
- * @version v1.3
+ * @version v1.4
  
  1. Set up library:
  1.1. Set up GPIO defines in lcd_user.h
@@ -15,15 +15,15 @@
  1.2. Create microcontroller-specific implementation of functions in lcd_user.c
 
  2. Init library:
- LCD_Init(2, 20); // 2 rows, 20 characters
+ lcd_init(2, 20); // 2 rows, 20 characters
 
  Examples:
  3. Print characters/strings/numbers:
  Note: x and y location starts with 0!
- LCD_PrintString(0, 0, "www.damogranlabs.com ");
- LCD_PrintStringWindow(0, 0, 10, 350, "Find us on github and www.damogranlabs.com ");
- LCD_PrintNumber(1, 0, -10);
- LCD_PrintFloat(1, 0, -326.5635, 5);
+ lcd_print_str(0, 0, "www.damogranlabs.com ");
+ lcd_print_str_windows(0, 0, 10, 350, "Find us on github and www.damogranlabs.com ");
+ lcd_prin_num(1, 0, -10);
+ lcd_prin_float(1, 0, -326.5635, 5);
 
  3.1. Create & print custom characters
  uint8_t damogranlabs_logo[]={
@@ -35,8 +35,8 @@
  0x00,
  0x00
  };
- LCD_CreateChar(0, damogranlabs_logo);
- LCD_PutCustom(0, 9, 0);
+ lcd_create_char(0, damogranlabs_logo);
+ lcd_put_char(0, 9, 0);
  */
 
 /* Includes -------------------------------------*/
@@ -45,6 +45,15 @@
 
 #include <stdio.h>
 #include <string.h>
+
+// private functions
+void _lcd_init_pins(void);
+void _lcd_send_command(uint8_t cmd);
+void _lcd_send_command_4_bit(uint8_t cmd);
+void _lcd_send_data(uint8_t data);
+void _lcd_cursor_set(uint8_t row, uint8_t col);
+void _lcd_enable_pulse(void);
+
 
 /* Private variables -------------------------------------*/
 typedef struct {
@@ -100,7 +109,7 @@ static _lcd_options_t _lcd_options;
  * @param  rows - height of lcd (>= 1)
  * @param  cols - width of lcdNone (>= 1)
  */
-void LCD_Init(uint8_t rows, uint8_t cols) {
+void lcd_init(uint8_t rows, uint8_t cols) {
   // Set LCD width and height
   _lcd_options.Rows = rows;
   _lcd_options.Cols = cols;
@@ -136,9 +145,9 @@ void LCD_Init(uint8_t rows, uint8_t cols) {
 
   // Turn the display on, no cursor, no blinking
   _lcd_options.DisplayControl = LCD_DISPLAYON;
-  LCD_DisplayOn();
+  lcd_display_on();
 
-  LCD_Clear();
+  lcd_clear();
 
   // Default font & direction
   _lcd_options.DisplayMode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
@@ -152,7 +161,7 @@ void LCD_Init(uint8_t rows, uint8_t cols) {
  * @param  x - column  (starts with 0)
  * @param  *str - pointer to string to display
  */
-void LCD_PrintString(uint8_t y, uint8_t x, char *str) {
+void lcd_print_str(uint8_t y, uint8_t x, char *str) {
   _lcd_cursor_set(y, x);
   while (*str) {
 #ifdef LCD_GO_TO_NEW_LINE_IF_STRING_TOO_LONG
@@ -196,7 +205,7 @@ void LCD_PrintString(uint8_t y, uint8_t x, char *str) {
  * @param  x - column  (starts with 0)
  * @param  *str - pointer to string to display
  */
-void LCD_PrintStringWindow(uint8_t y, uint8_t x, uint8_t window_size, uint16_t speed_ms, char *str) {
+void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t speed_ms, char *str) {
 
   uint8_t _window_character_number = 0;
   uint8_t string_length = strlen(str); // number of characters in passed string
@@ -238,7 +247,7 @@ void LCD_PrintStringWindow(uint8_t y, uint8_t x, uint8_t window_size, uint16_t s
     }
   }
   else {	// string is smaller than window size. Print it normally.
-    LCD_PrintString(y, x, str);
+    lcd_print_str(y, x, str);
   }
 }
 
@@ -248,10 +257,10 @@ void LCD_PrintStringWindow(uint8_t y, uint8_t x, uint8_t window_size, uint16_t s
  * @param  x - column  (starts with 0)
  * @param  number - range: -2147483647 to 2147483647
  */
-void LCD_PrintNumber(uint8_t y, uint8_t x, int32_t number) {
+void lcd_print_int(uint8_t y, uint8_t x, int32_t number) {
   char buf[50];
   snprintf(buf, 100, "%d", (int) number);
-  LCD_PrintString(y, x, buf);
+  lcd_print_str(y, x, buf);
 }
 
 /**
@@ -261,60 +270,60 @@ void LCD_PrintNumber(uint8_t y, uint8_t x, int32_t number) {
  * @param  number_f - float number
  * @param  precision - number of digits to be displayed
  */
-void LCD_PrintFloat(uint8_t y, uint8_t x, float number_f, uint8_t precision) {
+void lcd_print_float(uint8_t y, uint8_t x, float number_f, uint8_t precision) {
   char buf[50];
   snprintf(buf, 100, "%.*g", precision, number_f);
-  LCD_PrintString(y, x, buf);
+  lcd_print_str(y, x, buf);
 }
 
-void LCD_Clear(void) {
+void lcd_clear(void) {
   _lcd_send_command(LCD_CLEARDISPLAY);
   lcd_delay_ms(3);
 }
 
-void LCD_ClearArea(uint8_t y, uint8_t x_start, uint8_t x_end) {
+void lcd_clear_area(uint8_t y, uint8_t x_start, uint8_t x_end) {
   uint8_t x = x_start;
   while (x <= x_end) {
-    LCD_PrintString(y, x, " ");
+    lcd_print_str(y, x, " ");
     x++;
   }
 }
 
-void LCD_DisplayOn(void) {
+void lcd_display_on(void) {
   _lcd_options.DisplayControl |= LCD_DISPLAYON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void LCD_DisplayOff(void) {
+void lcd_display_off(void) {
   _lcd_options.DisplayControl &= ~LCD_DISPLAYON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void LCD_BlinkOn(void) {
+void lcd_blink_on(void) {
   _lcd_options.DisplayControl |= LCD_BLINKON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void LCD_BlinkOff(void) {
+void lcd_blink_off(void) {
   _lcd_options.DisplayControl &= ~LCD_BLINKON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void LCD_CursorOn(void) {
+void lcd_cursor_on(void) {
   _lcd_options.DisplayControl |= LCD_CURSORON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void LCD_CursorOff(void) {
+void lcd_cursor_off(void) {
   _lcd_options.DisplayControl &= ~LCD_CURSORON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void LCD_ScrollLeft(void) {
+void lcd_scroll_left(void) {
   _lcd_send_command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
 }
 
-void LCD_ScrollRight(void) {
+void lcd_scroll_right(void) {
   _lcd_send_command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
 }
 
@@ -324,7 +333,7 @@ void LCD_ScrollRight(void) {
  * @param Pointer to 8-bytes of data for one character
  * @retval None
  */
-void LCD_CreateChar(uint8_t location, uint8_t *data) {
+void lcd_create_char(uint8_t location, uint8_t *data) {
   uint8_t i;
   /* We have 8 locations available for custom characters */
   location &= 0x07;
@@ -341,7 +350,7 @@ void LCD_CreateChar(uint8_t location, uint8_t *data) {
  * @param  x - column
  * @param  location: Location on LCD where character is stored, 0 - 7
  */
-void LCD_PutCustom(uint8_t y, uint8_t x, uint8_t location) {
+void lcd_put_char(uint8_t y, uint8_t x, uint8_t location) {
   _lcd_cursor_set(y, x);
   _lcd_send_data(location);
 }

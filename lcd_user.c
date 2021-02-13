@@ -7,7 +7,7 @@
  * @author  Domen Jurkovic, Damogran Labs
  * @source  http://damogranlabs.com/
  *          https://github.com/damogranlabs
- * @version v1.3
+ * @version v1.4
  */
 
 /* Includes -------------------------------------*/
