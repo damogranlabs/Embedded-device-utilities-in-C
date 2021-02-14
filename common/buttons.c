@@ -8,8 +8,6 @@
 #include "buttons.h"
 #include "buttons_user.h"
 
-#include "uart_print.h"
-
 button_t _buttons[NUM_OF_BUTTONS]; // private: store pointers to buttons description structures.
 uint8_t _num_of_registered_buttons = 0; // private: number of currently registered buttons.
 

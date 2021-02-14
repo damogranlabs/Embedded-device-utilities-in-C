@@ -51,4 +51,4 @@ NOTE: User must manually implement interrupt routine (and set irq priority) on r
 This ensure library to register all rotary encoder interactions, and properly debounce any glitches so that the count is a valid number.
 
 ## Examples (STM32)
-See examples in [STM32 USB Shortcutter project](https://github.com/damogranlabs/USB-Shortcutter-based-on-STM32-and-AHK-script). 
+See examples in [STM32 USB Shortcutter (programable keys) project](https://github.com/damogranlabs/USB-Shortcutter-based-on-STM32-and-AHK-script). 
