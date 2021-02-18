@@ -54,7 +54,7 @@ void rot_enc_init(rot_enc_data_t *re_data,
   re_data->pin_B = pin_B;
 
   re_data->inc_dir = ROT_ENC_INC_CW;	// default mode is CW-increment
-  re_data->_last_pin_A_state = false;
+  re_data->_last_pin_A_state = rot_enc_read_pin(re_data->port_A, re_data->pin_A);
 
   re_data->abs_rot = 0;
   re_data->diff_rot = 0;
