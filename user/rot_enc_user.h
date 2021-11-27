@@ -22,5 +22,4 @@
 
 bool rot_enc_read_pin(ROT_ENC_GPIO_PORT_TYPE *port, ROT_ENC_GPIO_PIN_TYPE pin);
 
-#endif 
-
+#endif

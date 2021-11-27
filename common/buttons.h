@@ -13,30 +13,35 @@
 
 #include "buttons_user.h"
 
-typedef enum {
-  BTN_PHY_IDLE, // button is not pressed
+typedef enum
+{
+  BTN_PHY_IDLE,  // button is not pressed
   BTN_PHY_ACTIVE // button is pressed
 } btn_phy_state_t;
 
-typedef enum {
+typedef enum
+{
   BTN_STATE_IDLE,
   BTN_STATE_PRESS,
   BTN_STATE_LONGPRESS
 } btn_state_t;
 
-typedef enum {
+typedef enum
+{
   BTN_MODE_SINGLEPRESS, // only one on_button_press() call is generated per press
-  BTN_MODE_REPETITIVE, // multiple on_button_press() calls are generated while button is pressed.
-  BTN_MODE_LONGPRESS // after on_button_press() call is generated, on_button_longpress() call can be generated.
+  BTN_MODE_REPETITIVE,  // multiple on_button_press() calls are generated while button is pressed.
+  BTN_MODE_LONGPRESS    // after on_button_press() call is generated, on_button_longpress() call can be generated.
 } btn_press_mode_t;
 
-typedef struct {
+typedef struct
+{
   BTN_GPIO_PORT_TYPE *gpio_port;
   BTN_GPIO_PIN_TYPE gpio_pin;
   btn_press_mode_t press_mode;
 } btn_cfg_t;
 
-typedef struct {
+typedef struct
+{
   btn_cfg_t button_cfg;
   btn_state_t button_state;
   btn_phy_state_t button_phy_state;
@@ -47,9 +52,9 @@ typedef struct {
 
 void handle_buttons(void);
 
-void register_button(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode);
+button_t *register_button(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode);
 btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg);
-void on_button_press(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin);
-void on_button_longpress(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin);
+void on_button_press(btn_cfg_t *btn_cfg);
+void on_button_longpress(btn_cfg_t *btn_cfg);
 
 #endif

@@ -22,8 +22,9 @@ void _printUnsignedNumber(uint32_t n, uint8_t base);
  * @example printString("test data");
  * @retval None
  */
-void printString(char *data) {
-  send_data((uint8_t*) data, (uint16_t) strlen(data));
+void printString(char *data)
+{
+  send_data((uint8_t *)data, (uint16_t)strlen(data));
 }
 
 /**
@@ -33,13 +34,16 @@ void printString(char *data) {
  * @example printNumber(number, DEC); printNumber(2246, DEC);
  * @retval None
  */
-void printNumber(int32_t number, uint8_t base) {
-  if (number < 0) {
+void printNumber(int32_t number, uint8_t base)
+{
+  if (number < 0)
+  {
     printString("-");
     number = -number;
     _printUnsignedNumber(number, base);
   }
-  else {
+  else
+  {
     _printUnsignedNumber(number, base);
   }
 }
@@ -47,21 +51,25 @@ void printNumber(int32_t number, uint8_t base) {
 /**
  * @brief Same as printString() but append newline.
  */
-void printStringLn(char *data) {
-  send_data((uint8_t*) data, (uint16_t) strlen(data));
+void printStringLn(char *data)
+{
+  send_data((uint8_t *)data, (uint16_t)strlen(data));
   printLn();
 }
 
 /**
  * @brief Same as printNumber() but append newline.
  */
-void printNumberLn(int32_t number, uint8_t base) {
-  if (number < 0) {
+void printNumberLn(int32_t number, uint8_t base)
+{
+  if (number < 0)
+  {
     printString("-");
     number = -number;
     _printUnsignedNumber(number, base);
   }
-  else {
+  else
+  {
     _printUnsignedNumber(number, base);
   }
   printLn();
@@ -72,7 +80,8 @@ void printNumberLn(int32_t number, uint8_t base) {
  * @example printLn();
  * @retval None
  */
-void printLn() {
+void printLn()
+{
   printString("\n\r");
 }
 
@@ -83,7 +92,8 @@ void printLn() {
  * @note pay attention on "double" type range - approximately 6 digits after decimal point?
  * @retval None
  */
-void printFloat(double number) {
+void printFloat(double number)
+{
   char float_as_string[20];
   sprintf(float_as_string, "%f", number);
   printString(float_as_string);
@@ -92,7 +102,8 @@ void printFloat(double number) {
 /**
  * @brief Same as printFloat() but append newline.
  */
-void printFloatLn(double number) {
+void printFloatLn(double number)
+{
   printFloat(number);
   printLn();
 }
@@ -104,7 +115,8 @@ void printFloatLn(double number) {
  * @example _printUnsignedNumber(number, DEC);
  * @retval None
  */
-void _printUnsignedNumber(uint32_t n, uint8_t base) {
+void _printUnsignedNumber(uint32_t n, uint8_t base)
+{
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
   char *str = &buf[sizeof(buf) - 1];
   unsigned long m;
@@ -112,9 +124,11 @@ void _printUnsignedNumber(uint32_t n, uint8_t base) {
   *str = '\0';
 
   //prevent crash if called with base == 1
-  if (base < 2) base = 10;
+  if (base < 2)
+    base = 10;
 
-  do {
+  do
+  {
     m = n;
     n /= base;
     c = m - base * n;

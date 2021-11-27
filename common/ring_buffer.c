@@ -66,29 +66,31 @@
  * @param size - ring buffer size in number of bytes
  * @return RB_ERROR, RB_OK
  */
-rb_status_t ring_buffer_init(rb_att_t *rbd, uint32_t size){
+rb_status_t ring_buffer_init(rb_att_t *rbd, uint32_t size)
+{
   rbd->status = RB_ERROR;
-  
-  
-  if(rbd != NULL){  // rbd must not be pointer to nowhere
+
+  if (rbd != NULL)
+  {                                            // rbd must not be pointer to nowhere
     rbd->buff = calloc(size, sizeof(uint8_t)); // allocate memory of "size" bytes, set all values to 0.
     //rbd->buff = malloc(size * sizeof(uint8_t)); // Use this instead of calloc() if you don't wish to set all values to 0 by default.
 
-    if(rbd->buff != NULL){  // buff must not be pointer to nowhere
+    if (rbd->buff != NULL)
+    { // buff must not be pointer to nowhere
       rbd->n_elem = size;
 
       // Initialize the ring buffer internal variables
       rbd->head = 0;
       rbd->tail = 0;
       rbd->count = 0;
-      
+
       rbd->status = RB_OK;
     }
   }
 
   return rbd->status;
 }
-        
+
 /**
  * @brief Add a number of elements to the ring buffer
  * @param *rbd - pointer to the ring buffer descriptor
@@ -96,34 +98,41 @@ rb_status_t ring_buffer_init(rb_att_t *rbd, uint32_t size){
  * @param num - number of elements to add
  * @return RB_NOT_ENOUGH_SPACE, RB_OK, RB_ERROR
  */
-rb_status_t ring_buffer_put(rb_att_t *rbd, uint8_t *data, uint32_t num){
+rb_status_t ring_buffer_put(rb_att_t *rbd, uint8_t *data, uint32_t num)
+{
   rb_status_t status = RB_ERROR;
   uint32_t num_to_end = 0; // number of elements to the last buffer element (including current one (head))
-  
-  if(rbd != NULL){  // rbd must not be a pointer to nowhere
-    if(ring_buffer_free_elements(rbd) >= num){  // is there enough space in buffer for num of data
-      if(rbd->head >= rbd->n_elem){ // reset ring buffer head
+
+  if (rbd != NULL)
+  { // rbd must not be a pointer to nowhere
+    if (ring_buffer_free_elements(rbd) >= num)
+    { // is there enough space in buffer for num of data
+      if (rbd->head >= rbd->n_elem)
+      { // reset ring buffer head
         rbd->head = 0;
       }
-      
+
       num_to_end = rbd->n_elem - rbd->head; // that many data can be written into buffer, before reaching buffer last element
-      if(num_to_end < num){ // if there is not enough space for "num" of data before reaching buffer last element
-        memcpy(&(rbd->buff[rbd->head]), data, num_to_end); //write to buffer partial data
+      if (num_to_end < num)
+      {                                                             // if there is not enough space for "num" of data before reaching buffer last element
+        memcpy(&(rbd->buff[rbd->head]), data, num_to_end);          //write to buffer partial data
         memcpy(rbd->buff, (data + num_to_end), (num - num_to_end)); //write to buffer rest of the data, starting with buffer[0]
-        
+
         rbd->head = num - num_to_end;  //head
         rbd->count = rbd->count + num; // increment counter for num of data
       }
-      else{ // there is enough space before reaching buffer's last element
+      else
+      {                                             // there is enough space before reaching buffer's last element
         memcpy(&(rbd->buff[rbd->head]), data, num); //write to buffer all num of data in one piece
-        
-        rbd->head = rbd->head + num;  // increment head
+
+        rbd->head = rbd->head + num;   // increment head
         rbd->count = rbd->count + num; // increment counter for num of data
       }
-      
+
       status = RB_OK;
     }
-    else{ // there is not enough space in buffer for num of data
+    else
+    { // there is not enough space in buffer for num of data
       status = RB_NOT_ENOUGH_SPACE;
     }
   }
@@ -138,37 +147,44 @@ rb_status_t ring_buffer_put(rb_att_t *rbd, uint8_t *data, uint32_t num){
  * @param num - number of elements to read
  * @return RB_NOT_ENOUGH_DATA, RB_OK, RB_ERROR
  */
-rb_status_t ring_buffer_get(rb_att_t *rbd, uint8_t *data, uint32_t num){
+rb_status_t ring_buffer_get(rb_att_t *rbd, uint8_t *data, uint32_t num)
+{
   rb_status_t status = RB_ERROR;
   uint32_t num_to_end = 0;
-  
-  if(rbd != NULL){  // rbd must not be a pointer to nowhere
-    if(ring_buffer_size(rbd) >= num){ //buffer is not empty and there is at least num of data stored
-      if(rbd->tail >= rbd->n_elem){ // reset ring buffer tail
+
+  if (rbd != NULL)
+  { // rbd must not be a pointer to nowhere
+    if (ring_buffer_size(rbd) >= num)
+    { //buffer is not empty and there is at least num of data stored
+      if (rbd->tail >= rbd->n_elem)
+      { // reset ring buffer tail
         rbd->tail = 0;
       }
-      
+
       num_to_end = rbd->n_elem - rbd->tail;
-      if(num >= num_to_end){ // is there enough ("num") of data to read before reaching buffer last element
-        memcpy(data, &(rbd->buff[rbd->tail]), num_to_end); //read from buffer partial data
+      if (num >= num_to_end)
+      {                                                           // is there enough ("num") of data to read before reaching buffer last element
+        memcpy(data, &(rbd->buff[rbd->tail]), num_to_end);        //read from buffer partial data
         memcpy(data + num_to_end, rbd->buff, (num - num_to_end)); //read from buffer remaining partial data
-          
+
         rbd->tail = num - num_to_end;  // tail increment
         rbd->count = rbd->count - num; // decrement counter for num of data
       }
-      else{ //there is enough data to be read before reaching last element of ring buffer
+      else
+      {                                             //there is enough data to be read before reaching last element of ring buffer
         memcpy(data, &(rbd->buff[rbd->tail]), num); //read from buffer
-        
-        rbd->tail = rbd->tail + num;  // increment tail
+
+        rbd->tail = rbd->tail + num;   // increment tail
         rbd->count = rbd->count - num; // decrement counter for num of data
       }
       status = RB_OK;
     }
-    else{
+    else
+    {
       status = RB_NOT_ENOUGH_DATA;
     }
   }
-  
+
   rbd->status = status;
   return status;
 }
@@ -178,18 +194,22 @@ rb_status_t ring_buffer_get(rb_att_t *rbd, uint8_t *data, uint32_t num){
  * @param *rbd - pointer to the ring buffer descriptor
  * @return RB_FULL if empty, RB_OK if not, RB_ERROR if invalid parameters. 
  */
-rb_status_t ring_buffer_full(rb_att_t *rbd){
+rb_status_t ring_buffer_full(rb_att_t *rbd)
+{
   rb_status_t status = RB_ERROR;
-  
-  if(rbd != NULL){
-   if(rbd->count >= rbd->n_elem){
-     status = RB_FULL;
-   }
-   else{
-     status = RB_OK;
-   }
+
+  if (rbd != NULL)
+  {
+    if (rbd->count >= rbd->n_elem)
+    {
+      status = RB_FULL;
+    }
+    else
+    {
+      status = RB_OK;
+    }
   }
-  
+
   rbd->status = status;
   return status;
 }
@@ -199,18 +219,22 @@ rb_status_t ring_buffer_full(rb_att_t *rbd){
  * @param *rbd - pointer to the ring buffer descriptor
  * @return RB_EMPTY if empty, RB_OK if not, RB_ERROR if invalid parameters. 
  */
-rb_status_t ring_buffer_empty(rb_att_t *rbd){
+rb_status_t ring_buffer_empty(rb_att_t *rbd)
+{
   rb_status_t status = RB_ERROR;
-  
-  if(rbd != NULL){
-   if(rbd->count == 0){
-     status = RB_EMPTY;
-   }
-   else{
-     status = RB_OK;
-   }
+
+  if (rbd != NULL)
+  {
+    if (rbd->count == 0)
+    {
+      status = RB_EMPTY;
+    }
+    else
+    {
+      status = RB_OK;
+    }
   }
-  
+
   rbd->status = status;
   return status;
 }
@@ -220,13 +244,15 @@ rb_status_t ring_buffer_empty(rb_att_t *rbd){
  * @param *rbd - pointer to the ring buffer descriptor
  * @return 0 on invalid parameter, number of elements otherwise
  */
-uint32_t ring_buffer_free_elements(rb_att_t *rbd){
+uint32_t ring_buffer_free_elements(rb_att_t *rbd)
+{
   uint32_t ret_val = 0;
-  
-  if(rbd != NULL){  // rbd must not be a pointer to nowhere
-   ret_val = rbd->n_elem - rbd->count;
+
+  if (rbd != NULL)
+  { // rbd must not be a pointer to nowhere
+    ret_val = rbd->n_elem - rbd->count;
   }
-  
+
   return ret_val;
 }
 
@@ -235,13 +261,15 @@ uint32_t ring_buffer_free_elements(rb_att_t *rbd){
  * @param *rbd - pointer to the ring buffer descriptor
  * @return 0 if invalid parameters, number of data stored in buffer otherwise
  */
-uint32_t ring_buffer_size(rb_att_t *rbd){
+uint32_t ring_buffer_size(rb_att_t *rbd)
+{
   uint32_t size = 0;
-  
-  if(rbd != NULL){  // rbd must not be a pointer to nowhere
+
+  if (rbd != NULL)
+  { // rbd must not be a pointer to nowhere
     size = rbd->count;
   }
-  
+
   return size;
 }
 
@@ -249,19 +277,20 @@ uint32_t ring_buffer_size(rb_att_t *rbd){
  * @brief Flush data from ring buffer (discard head, tail and count data)
  * @param *rbd - pointer to the ring buffer descriptor
  */
-void ring_buffer_flush(rb_att_t *rbd){
+void ring_buffer_flush(rb_att_t *rbd)
+{
   rbd->head = 0;
   rbd->tail = 0;
   rbd->count = 0;
-  
-  memset(rbd->buff, 0, rbd->n_elem);  // set all values back to 0.
+
+  memset(rbd->buff, 0, rbd->n_elem); // set all values back to 0.
 }
 
 /**
  * @brief Get ring buffer current status
  * @param *rbd - pointer to the ring buffer descriptor
  */
-rb_status_t ring_buffer_get_status(rb_att_t *rbd){
+rb_status_t ring_buffer_get_status(rb_att_t *rbd)
+{
   return rbd->status;
 }
-

@@ -54,9 +54,9 @@ void _lcd_send_data(uint8_t data);
 void _lcd_cursor_set(uint8_t row, uint8_t col);
 void _lcd_enable_pulse(void);
 
-
 /* Private variables -------------------------------------*/
-typedef struct {
+typedef struct
+{
   uint8_t DisplayControl;
   uint8_t DisplayFunction;
   uint8_t DisplayMode;
@@ -64,52 +64,53 @@ typedef struct {
   uint8_t Cols;
   uint8_t currentX;
   uint8_t currentY;
-} _lcd_options_t;		// private LCD structure
+} _lcd_options_t; // private LCD structure
 
 static _lcd_options_t _lcd_options;
 
 /* Private defines -------------------------------------*/
 /* Commands*/
-#define LCD_CLEARDISPLAY        0x01
-#define LCD_RETURNHOME          0x02
-#define LCD_ENTRYMODESET        0x04
-#define LCD_DISPLAYCONTROL      0x08
-#define LCD_CURSORSHIFT         0x10
-#define LCD_FUNCTIONSET         0x20
-#define LCD_SETCGRAMADDR        0x40
-#define LCD_SETDDRAMADDR        0x80
+#define LCD_CLEARDISPLAY 0x01
+#define LCD_RETURNHOME 0x02
+#define LCD_ENTRYMODESET 0x04
+#define LCD_DISPLAYCONTROL 0x08
+#define LCD_CURSORSHIFT 0x10
+#define LCD_FUNCTIONSET 0x20
+#define LCD_SETCGRAMADDR 0x40
+#define LCD_SETDDRAMADDR 0x80
 
 /* Flags for display entry mode */
-#define LCD_ENTRYRIGHT          0x00
-#define LCD_ENTRYLEFT           0x02
+#define LCD_ENTRYRIGHT 0x00
+#define LCD_ENTRYLEFT 0x02
 #define LCD_ENTRYSHIFTINCREMENT 0x01
 #define LCD_ENTRYSHIFTDECREMENT 0x00
 
 /* Flags for display on/off control */
-#define LCD_DISPLAYON           0x04
-#define LCD_CURSORON            0x02
-#define LCD_BLINKON             0x01
+#define LCD_DISPLAYON 0x04
+#define LCD_CURSORON 0x02
+#define LCD_BLINKON 0x01
 
 /* Flags for display/cursor shift */
-#define LCD_DISPLAYMOVE         0x08
-#define LCD_CURSORMOVE          0x00
-#define LCD_MOVERIGHT           0x04
-#define LCD_MOVELEFT            0x00
+#define LCD_DISPLAYMOVE 0x08
+#define LCD_CURSORMOVE 0x00
+#define LCD_MOVERIGHT 0x04
+#define LCD_MOVELEFT 0x00
 
 /* Flags for function set */
-#define LCD_8BITMODE            0x10
-#define LCD_4BITMODE            0x00
-#define LCD_2LINE               0x08
-#define LCD_1LINE               0x00
-#define LCD_5x10DOTS            0x04
-#define LCD_5x8DOTS             0x00
+#define LCD_8BITMODE 0x10
+#define LCD_4BITMODE 0x00
+#define LCD_2LINE 0x08
+#define LCD_1LINE 0x00
+#define LCD_5x10DOTS 0x04
+#define LCD_5x8DOTS 0x00
 
 /**
  * @brief  Initializes LCD (HD44780)
  * @param  rows - height of lcd (>= 1)
  * @param  cols - width of lcdNone (>= 1)
  */
-void lcd_init(uint8_t rows, uint8_t cols) {
+void lcd_init(uint8_t rows, uint8_t cols)
+{
   // Set LCD width and height
   _lcd_options.Rows = rows;
   _lcd_options.Cols = cols;
@@ -118,7 +119,8 @@ void lcd_init(uint8_t rows, uint8_t cols) {
   _lcd_options.currentY = 0;
 
   _lcd_options.DisplayFunction = LCD_4BITMODE | LCD_5x8DOTS | LCD_1LINE;
-  if (rows > 1) {
+  if (rows > 1)
+  {
     _lcd_options.DisplayFunction |= LCD_2LINE;
   }
 
@@ -126,15 +128,15 @@ void lcd_init(uint8_t rows, uint8_t cols) {
 
   /* Try to set 4bit mode */
   _lcd_send_command_4_bit(0x03);
-  lcd_delay_us(5000);
+  lcd_delay_ms(5);
 
   /* Second try */
   _lcd_send_command_4_bit(0x03);
-  lcd_delay_us(5000);
+  lcd_delay_ms(5);
 
   /* Third go! */
   _lcd_send_command_4_bit(0x03);
-  lcd_delay_us(5000);
+  lcd_delay_ms(5);
 
   /* Set 4-bit interface */
   _lcd_send_command_4_bit(0x02);
@@ -152,7 +154,7 @@ void lcd_init(uint8_t rows, uint8_t cols) {
   // Default font & direction
   _lcd_options.DisplayMode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
   _lcd_send_command(LCD_ENTRYMODESET | _lcd_options.DisplayMode);
-  lcd_delay_us(5000);
+  lcd_delay_ms(5);
 }
 
 /**
@@ -161,40 +163,50 @@ void lcd_init(uint8_t rows, uint8_t cols) {
  * @param  x - column  (starts with 0)
  * @param  *str - pointer to string to display
  */
-void lcd_print_str(uint8_t y, uint8_t x, char *str) {
+void lcd_print_str(uint8_t y, uint8_t x, char *str)
+{
   _lcd_cursor_set(y, x);
-  while (*str) {
+  while (*str)
+  {
 #ifdef LCD_GO_TO_NEW_LINE_IF_STRING_TOO_LONG
-			if (_lcd_options.currentX >= _lcd_options.Cols) {
-				_lcd_options.currentX = 0;
-				_lcd_options.currentY++;
-				_lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
-			}
-			if (*str == '\n') {
-				_lcd_options.currentY++;
-				_lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
-			} else if (*str == '\r') {
-				_lcd_cursor_set(_lcd_options.currentY, 0);
-			} else {
-				_lcd_send_data(*str);
-				_lcd_options.currentX++;
-			}
-			str++;
-		#else
-    if (*str == '\n') {
+    if (_lcd_options.currentX >= _lcd_options.Cols)
+    {
+      _lcd_options.currentX = 0;
       _lcd_options.currentY++;
       _lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
     }
-    else if (*str == '\r') {
+    if (*str == '\n')
+    {
+      _lcd_options.currentY++;
+      _lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
+    }
+    else if (*str == '\r')
+    {
       _lcd_cursor_set(_lcd_options.currentY, 0);
     }
-    else {
+    else
+    {
+      _lcd_send_data(*str);
+      _lcd_options.currentX++;
+    }
+    str++;
+#else
+    if (*str == '\n')
+    {
+      _lcd_options.currentY++;
+      _lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
+    }
+    else if (*str == '\r')
+    {
+      _lcd_cursor_set(_lcd_options.currentY, 0);
+    }
+    else
+    {
       _lcd_send_data(*str);
       _lcd_options.currentX++;
     }
     str++;
 #endif
-
   }
 }
 
@@ -205,18 +217,21 @@ void lcd_print_str(uint8_t y, uint8_t x, char *str) {
  * @param  x - column  (starts with 0)
  * @param  *str - pointer to string to display
  */
-void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t speed_ms, char *str) {
+void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t speed_ms, char *str)
+{
 
   uint8_t _window_character_number = 0;
   uint8_t string_length = strlen(str); // number of characters in passed string
-  uint8_t _str_character_number = 0;	// 0 - strlen(str)
+  uint8_t _str_character_number = 0;   // 0 - strlen(str)
   char *_str = str;
 
   _lcd_cursor_set(y, x);
 
-  if (string_length > window_size) {	// string is larger than window size. String must be scrolled
+  if (string_length > window_size)
+  { // string is larger than window size. String must be scrolled
     // write character while they are inside window size
-    while (_str_character_number < window_size) {
+    while (_str_character_number < window_size)
+    {
       _lcd_send_data(*_str);
 
       _lcd_options.currentX++;
@@ -226,27 +241,30 @@ void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t sp
     lcd_delay_ms(LCD_WINDOW_PRINT_DELAY_MS);
 
     _str_character_number = 0;
-    _str = str++;	// increment starting character
+    _str = str++; // increment starting character
 
     // scroll characters in window until last x characters can be shown in window
-    while ((string_length - _str_character_number) >= window_size) {
-      _window_character_number = 0;	// reset character position in window.
+    while ((string_length - _str_character_number) >= window_size)
+    {
+      _window_character_number = 0; // reset character position in window.
       _lcd_cursor_set(y, x);
 
-      while (_window_character_number < window_size) {// while character number is smaller than window size
-        _lcd_send_data(*_str);	// print character
-        _lcd_options.currentX++;	// increment x position
-        _window_character_number++;	// increment position in window
-        _str++;	// increment starting character
+      while (_window_character_number < window_size)
+      {                             // while character number is smaller than window size
+        _lcd_send_data(*_str);      // print character
+        _lcd_options.currentX++;    // increment x position
+        _window_character_number++; // increment position in window
+        _str++;                     // increment starting character
       }
 
-      _str = str++;	// increment starting character
+      _str = str++; // increment starting character
       _str_character_number++;
 
       lcd_delay_ms(speed_ms);
     }
   }
-  else {	// string is smaller than window size. Print it normally.
+  else
+  { // string is smaller than window size. Print it normally.
     lcd_print_str(y, x, str);
   }
 }
@@ -257,9 +275,10 @@ void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t sp
  * @param  x - column  (starts with 0)
  * @param  number - range: -2147483647 to 2147483647
  */
-void lcd_print_int(uint8_t y, uint8_t x, int32_t number) {
+void lcd_print_int(uint8_t y, uint8_t x, int32_t number)
+{
   char buf[50];
-  snprintf(buf, 100, "%d", (int) number);
+  snprintf(buf, 50, "%d", (int)number);
   lcd_print_str(y, x, buf);
 }
 
@@ -270,60 +289,72 @@ void lcd_print_int(uint8_t y, uint8_t x, int32_t number) {
  * @param  number_f - float number
  * @param  precision - number of digits to be displayed
  */
-void lcd_print_float(uint8_t y, uint8_t x, float number_f, uint8_t precision) {
+void lcd_print_float(uint8_t y, uint8_t x, float number_f, uint8_t precision)
+{
   char buf[50];
-  snprintf(buf, 100, "%.*g", precision, number_f);
+  snprintf(buf, 50, "%.*g", precision, number_f);
   lcd_print_str(y, x, buf);
 }
 
-void lcd_clear(void) {
+void lcd_clear(void)
+{
   _lcd_send_command(LCD_CLEARDISPLAY);
   lcd_delay_ms(3);
 }
 
-void lcd_clear_area(uint8_t y, uint8_t x_start, uint8_t x_end) {
+void lcd_clear_area(uint8_t y, uint8_t x_start, uint8_t x_end)
+{
   uint8_t x = x_start;
-  while (x <= x_end) {
+  while (x <= x_end)
+  {
     lcd_print_str(y, x, " ");
     x++;
   }
 }
 
-void lcd_display_on(void) {
+void lcd_display_on(void)
+{
   _lcd_options.DisplayControl |= LCD_DISPLAYON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void lcd_display_off(void) {
+void lcd_display_off(void)
+{
   _lcd_options.DisplayControl &= ~LCD_DISPLAYON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void lcd_blink_on(void) {
+void lcd_blink_on(void)
+{
   _lcd_options.DisplayControl |= LCD_BLINKON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void lcd_blink_off(void) {
+void lcd_blink_off(void)
+{
   _lcd_options.DisplayControl &= ~LCD_BLINKON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void lcd_cursor_on(void) {
+void lcd_cursor_on(void)
+{
   _lcd_options.DisplayControl |= LCD_CURSORON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void lcd_cursor_off(void) {
+void lcd_cursor_off(void)
+{
   _lcd_options.DisplayControl &= ~LCD_CURSORON;
   _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
 }
 
-void lcd_scroll_left(void) {
+void lcd_scroll_left(void)
+{
   _lcd_send_command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
 }
 
-void lcd_scroll_right(void) {
+void lcd_scroll_right(void)
+{
   _lcd_send_command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
 }
 
@@ -333,13 +364,15 @@ void lcd_scroll_right(void) {
  * @param Pointer to 8-bytes of data for one character
  * @retval None
  */
-void lcd_create_char(uint8_t location, uint8_t *data) {
+void lcd_create_char(uint8_t location, uint8_t *data)
+{
   uint8_t i;
   /* We have 8 locations available for custom characters */
   location &= 0x07;
   _lcd_send_command(LCD_SETCGRAMADDR | (location << 3));
 
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < 8; i++)
+  {
     _lcd_send_data(data[i]);
   }
 }
@@ -350,13 +383,15 @@ void lcd_create_char(uint8_t location, uint8_t *data) {
  * @param  x - column
  * @param  location: Location on LCD where character is stored, 0 - 7
  */
-void lcd_put_char(uint8_t y, uint8_t x, uint8_t location) {
+void lcd_put_char(uint8_t y, uint8_t x, uint8_t location)
+{
   _lcd_cursor_set(y, x);
   _lcd_send_data(location);
 }
 
 /* Private functions */
-void _lcd_send_command(uint8_t cmd) {
+void _lcd_send_command(uint8_t cmd)
+{
   /* Command mode */
   lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, false);
 
@@ -366,7 +401,8 @@ void _lcd_send_command(uint8_t cmd) {
   _lcd_send_command_4_bit(cmd & 0x0F);
 }
 
-void _lcd_send_data(uint8_t data) {
+void _lcd_send_data(uint8_t data)
+{
   /* Data mode */
   lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, true);
 
@@ -376,21 +412,24 @@ void _lcd_send_data(uint8_t data) {
   _lcd_send_command_4_bit(data & 0x0F);
 }
 
-void _lcd_send_command_4_bit(uint8_t cmd) {
+void _lcd_send_command_4_bit(uint8_t cmd)
+{
   /* Set output port */
-  lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, (bool) (cmd & 0x08));
-  lcd_write_pin(LCD_D6_GPIO_Port, LCD_D6_Pin, (bool) (cmd & 0x04));
-  lcd_write_pin(LCD_D5_GPIO_Port, LCD_D5_Pin, (bool) (cmd & 0x02));
-  lcd_write_pin(LCD_D4_GPIO_Port, LCD_D4_Pin, (bool) (cmd & 0x01));
+  lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, (bool)(cmd & 0x08));
+  lcd_write_pin(LCD_D6_GPIO_Port, LCD_D6_Pin, (bool)(cmd & 0x04));
+  lcd_write_pin(LCD_D5_GPIO_Port, LCD_D5_Pin, (bool)(cmd & 0x02));
+  lcd_write_pin(LCD_D4_GPIO_Port, LCD_D4_Pin, (bool)(cmd & 0x01));
 
   _lcd_enable_pulse();
 }
 
-void _lcd_cursor_set(uint8_t row, uint8_t col) {
-  uint8_t row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
+void _lcd_cursor_set(uint8_t row, uint8_t col)
+{
+  uint8_t row_offsets[] = {0x00, 0x40, 0x14, 0x54};
 
   /* Go to beginning */
-  if (row >= _lcd_options.Rows) {
+  if (row >= _lcd_options.Rows)
+  {
     row = 0;
   }
 
@@ -402,7 +441,8 @@ void _lcd_cursor_set(uint8_t row, uint8_t col) {
   _lcd_send_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
-void _lcd_init_pins(void) {
+void _lcd_init_pins(void)
+{
   // set GPIO initial state
   lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, false);
   lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, false);
@@ -413,7 +453,8 @@ void _lcd_init_pins(void) {
   lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, false);
 }
 
-void _lcd_enable_pulse(void) {
+void _lcd_enable_pulse(void)
+{
   lcd_write_pin(LCD_E_GPIO_Port, LCD_E_Pin, true);
   lcd_delay_us(2);
 

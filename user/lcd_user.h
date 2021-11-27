@@ -9,7 +9,7 @@
  *          https://github.com/damogranlabs
  * @version v1.4
 */
- 
+
 #ifndef __LCD_USER_H
 #define __LCD_USER_H
 
@@ -37,7 +37,7 @@
 #define LCD_E_Pin GPIO_PIN_10
 
 //#define LCD_GO_TO_NEW_LINE_IF_STRING_TOO_LONG	// uncomment if strings larger than screen size should break and continue on new line.
-#define LCD_WINDOW_PRINT_DELAY_MS	800	// delay between static view and window scrolling (used in LCD_PrintStringWindow();)
+#define LCD_WINDOW_PRINT_DELAY_MS 800 // delay between static view and window scrolling (used in LCD_PrintStringWindow();)
 
 void lcd_delay_us(uint32_t uSec);
 void lcd_delay_ms(uint32_t mSec);

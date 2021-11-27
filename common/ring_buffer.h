@@ -48,23 +48,25 @@
 
 #include <stdint.h>
 
-typedef enum {
+typedef enum
+{
   RB_OK = 0,
   RB_ERROR, // NULL pointer or invalid attributes
   RB_EMPTY,
   RB_FULL,
   RB_NOT_ENOUGH_SPACE, // there is not enaugh room for "num" of data to be written into buffer
-  RB_NOT_ENOUGH_DATA // there is not enaugh data in buffer
+  RB_NOT_ENOUGH_DATA   // there is not enaugh data in buffer
 } rb_status_t;
 
-typedef struct {
-  uint8_t *buff;  // actual buffer  
-  uint32_t n_elem;  // number of s_elem sized elements in this buffer
-  uint32_t head;    // number of first free element in buffer (0 ... n_elem-1)
-  uint32_t tail;    // number of last used element in buffer (0 ... n_elem-1)
-  uint32_t count;   // number of elements stored in buffer  (0 ... n_elem)
-  rb_status_t status;   //current status of ring buffer
-}volatile rb_att_t;
+typedef struct
+{
+  uint8_t *buff;      // actual buffer
+  uint32_t n_elem;    // number of s_elem sized elements in this buffer
+  uint32_t head;      // number of first free element in buffer (0 ... n_elem-1)
+  uint32_t tail;      // number of last used element in buffer (0 ... n_elem-1)
+  uint32_t count;     // number of elements stored in buffer  (0 ... n_elem)
+  rb_status_t status; //current status of ring buffer
+} volatile rb_att_t;
 
 rb_status_t ring_buffer_init(rb_att_t *rbd, uint32_t size);
 
@@ -81,4 +83,3 @@ void ring_buffer_flush(rb_att_t *rbd);
 rb_status_t ring_buffer_get_status(rb_att_t *rbd);
 
 #endif
-

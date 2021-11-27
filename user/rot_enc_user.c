@@ -16,6 +16,7 @@
  * @param GPIO pin
  * @retval bool (0 if pin state is logical low, 1 if pin state is logical high)
  */
-bool rot_enc_read_pin(ROT_ENC_GPIO_PORT_TYPE *port, ROT_ENC_GPIO_PIN_TYPE pin) {
-  return (bool) HAL_GPIO_ReadPin(port, pin);
+bool rot_enc_read_pin(ROT_ENC_GPIO_PORT_TYPE *port, ROT_ENC_GPIO_PIN_TYPE pin)
+{
+  return (bool)HAL_GPIO_ReadPin(port, pin);
 }
