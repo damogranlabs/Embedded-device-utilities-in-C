@@ -41,8 +41,8 @@ void rot_enc_init(rot_enc_data_t *re_data,
                   ROT_ENC_GPIO_PIN_TYPE pin_B);
 void rot_enc_set_direction(rot_enc_data_t *re_data, rot_enc_inc_dir_t re_dir);
 
-int32_t rot_enc_get_count(rot_enc_data_t *re_data);
-int32_t rot_enc_get_abs_count(rot_enc_data_t *re_data);
+volatile int32_t rot_enc_get_count(rot_enc_data_t *re_data);
+volatile int32_t rot_enc_get_abs_count(rot_enc_data_t *re_data);
 void rot_enc_reset_count(rot_enc_data_t *re_data);
 
 void rot_enc_update(rot_enc_data_t *re_data);

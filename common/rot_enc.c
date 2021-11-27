@@ -76,7 +76,7 @@ void rot_enc_set_direction(rot_enc_data_t *re_data, rot_enc_inc_dir_t re_dir)
  * @param Rotary encoder data
  * @retval Difference from the last time this function was called.
  */
-int32_t rot_enc_get_count(rot_enc_data_t *re_data)
+volatile int32_t rot_enc_get_count(rot_enc_data_t *re_data)
 {
   int32_t difference = re_data->diff_rot;
 
@@ -89,7 +89,7 @@ int32_t rot_enc_get_count(rot_enc_data_t *re_data)
  * @param Rotary encoder data
  * @retval Absolute count value.
  */
-int32_t rot_enc_get_abs_count(rot_enc_data_t *re_data)
+volatile int32_t rot_enc_get_abs_count(rot_enc_data_t *re_data)
 {
   return re_data->abs_rot;
 }
