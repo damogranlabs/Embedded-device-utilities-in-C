@@ -27,8 +27,8 @@ typedef struct
   ROT_ENC_GPIO_PIN_TYPE pin_B;
 
   rot_enc_inc_dir_t inc_dir; //  Increment direction (CW or CCW)
-  int32_t abs_rot;           //  Absolute rotation from beginning
-  int32_t diff_rot;          //  Difference in rotation from last check
+  int32_t volatile abs_rot;  //  Absolute rotation from beginning
+  int32_t volatile diff_rot; //  Difference in rotation from last check
 
   //private
   bool _last_pin_A_state; //  Last state of pin A
@@ -44,6 +44,7 @@ void rot_enc_set_direction(rot_enc_data_t *re_data, rot_enc_inc_dir_t re_dir);
 volatile int32_t rot_enc_get_count(rot_enc_data_t *re_data);
 volatile int32_t rot_enc_get_abs_count(rot_enc_data_t *re_data);
 void rot_enc_reset_count(rot_enc_data_t *re_data);
+void rot_enc_reset_abs_count(rot_enc_data_t *re_data);
 
 void rot_enc_update(rot_enc_data_t *re_data);
 

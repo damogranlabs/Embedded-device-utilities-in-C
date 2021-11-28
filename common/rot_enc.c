@@ -95,13 +95,23 @@ volatile int32_t rot_enc_get_abs_count(rot_enc_data_t *re_data)
 }
 
 /**
- * @brief Reset internal count value to zero
+ * @brief Reset internal count value from the last read to zero. Absolute count is left intact.
  * @param Rotary encoder data
  * @retval None.
  */
 void rot_enc_reset_count(rot_enc_data_t *re_data)
 {
-  re_data->diff_rot = -re_data->abs_rot;
+  re_data->diff_rot = 0;
+}
+
+/**
+ * @brief Reset both, absolute and diff internal count value.
+ * @param Rotary encoder data
+ * @retval None.
+ */
+void rot_enc_reset_abs_count(rot_enc_data_t *re_data)
+{
+  re_data->diff_rot = 0;
   re_data->abs_rot = 0;
 }
 
