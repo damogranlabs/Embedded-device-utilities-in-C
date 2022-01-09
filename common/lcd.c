@@ -215,7 +215,7 @@ void lcd_print_str(uint8_t y, uint8_t x, char *str)
  * @param  window_size - number of characters from x position, where string will be displayed
  * @param  y - row (starts with 0)
  * @param  x - column  (starts with 0)
- * @param  *str - pointer to string to display
+ * @param  str - pointer to string to display
  */
 void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t speed_ms, char *str)
 {
@@ -273,12 +273,12 @@ void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t sp
  * @brief  Print string and scroll it (right to left) on LCD in specific window size.
  * @param  y - row (starts with 0)
  * @param  x - column  (starts with 0)
- * @param  number - range: -2147483647 to 2147483647
+ * @param  num - integer number
  */
-void lcd_print_int(uint8_t y, uint8_t x, int32_t number)
+void lcd_print_int(uint8_t y, uint8_t x, int32_t num)
 {
   char buf[_lcd_options.cols];
-  snprintf(buf, sizeof(buf), "%d", (int)number);
+  snprintf(buf, sizeof(buf), "%d", (int)num);
   lcd_print_str(y, x, buf);
 }
 
@@ -286,14 +286,14 @@ void lcd_print_int(uint8_t y, uint8_t x, int32_t number)
  * @brief  Print string and scroll it (right to left) on LCD in specific window size.
  * @param  y - row
  * @param  x - column
- * @param  number_f - float number
+ * @param  num - float number
  * @param  precision - number of digits to be displayed
  */
-void lcd_print_float(uint8_t y, uint8_t x, float number_f, uint8_t precision)
+void lcd_print_float(uint8_t y, uint8_t x, float num, uint8_t precision)
 {
   char buf[_lcd_options.cols];
 
-  snprintf(buf, sizeof(buf), "%.*g", precision, number_f);
+  snprintf(buf, sizeof(buf), "%.*g", precision, num);
   lcd_print_str(y, x, buf);
 }
 
@@ -361,8 +361,8 @@ void lcd_scroll_right(void)
 
 /**
  * @brief Creates custom character at specific location
- * @param LCD memory location (LCD supports up to 8 custom characters, locations: 0 - 7)
- * @param Pointer to 8-bytes of data for one character
+ * @param location - LCD memory location (LCD supports up to 8 custom characters, locations: 0 - 7)
+ * @param data - Pointer to 8-bytes of data for one character
  * @retval None
  */
 void lcd_create_char(uint8_t location, uint8_t *data)
