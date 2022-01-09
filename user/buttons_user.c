@@ -14,6 +14,16 @@
 #include "main.h"
 
 /**
+ * @brief Get current system milliseconds (systick) value (usually started at system reset).
+ * @retval Milliseconds value.
+ * TODO: user must implement this function to return milliseconds (systick) value.
+ */
+uint32_t get_milliseconds(void)
+{
+  return HAL_GetTick();
+}
+
+/**
  * @brief Low level call to get actual pin state.
  * @param Registered button configuration structure.
  * @retval BTN_PHY_ACTIVE on button press, BTN_PHY_IDLE otherwise.

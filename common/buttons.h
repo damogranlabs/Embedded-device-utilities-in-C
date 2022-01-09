@@ -53,6 +53,8 @@ typedef struct
 void handle_buttons(void);
 
 button_t *register_button(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode);
+
+uint32_t get_milliseconds(void);
 btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg);
 void on_button_press(btn_cfg_t *btn_cfg);
 void on_button_longpress(btn_cfg_t *btn_cfg);

@@ -22,7 +22,7 @@ void handle_buttons(void)
   uint8_t btn_num;
   btn_phy_state_t phy_state;
   button_t *btn;
-  uint32_t timestamp = HAL_GetTick();
+  uint32_t timestamp = get_milliseconds();
 
   for (btn_num = 0; btn_num < _num_of_registered_buttons; btn_num++)
   {
