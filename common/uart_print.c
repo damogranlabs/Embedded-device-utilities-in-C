@@ -3,7 +3,7 @@
  * @date    26-Apr-2020
  * @author  Domen Jurkovic
  * @source  http://damogranlabs.com/
- *          https://github.com/damogranlabs
+ *          https://github.com/damogranlabs/Embedded-device-utilities-in-C
  */
 #include "uart_print.h"
 #include "uart_print_user.h"

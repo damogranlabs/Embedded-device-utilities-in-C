@@ -40,7 +40,7 @@
  *
  * @source  Modified:
  *          http://damogranlabs.com/
- *          https://github.com/damogranlabs
+ *          https://github.com/damogranlabs/Embedded-device-utilities-in-C
  *
  *    1. Create ring buffer descriptor structure, define buffer size:
  *        #define RX_BUFF_SIZE 128

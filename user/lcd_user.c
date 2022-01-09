@@ -6,7 +6,7 @@
  * @date    13-Feb-2021
  * @author  Domen Jurkovic, Damogran Labs
  * @source  http://damogranlabs.com/
- *          https://github.com/damogranlabs
+ *          https://github.com/damogranlabs/Embedded-device-utilities-in-C
  * @version v1.4
  */
 

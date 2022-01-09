@@ -40,7 +40,7 @@
  *
  * @source  Modified:
  *          http://damogranlabs.com/
- *          https://github.com/damogranlabs
+ *          https://github.com/damogranlabs/Embedded-device-utilities-in-C
  */
 
 #ifndef __RING_BUFFER_H

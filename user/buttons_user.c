@@ -3,7 +3,7 @@
  * @date    30-May-2020
  * @author  Domen Jurkovic
  * @source  http://damogranlabs.com/
- *          https://github.com/damogranlabs
+ *          https://github.com/damogranlabs/Embedded-device-utilities-in-C/Embedded-device-utilities-in-C
  */
 #include "stdint.h"
 
