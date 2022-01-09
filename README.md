@@ -1,6 +1,11 @@
 # Embedded device utilities in C
 Utility libraries for embedded devices written in C. Easily portable to any device.
 
+## Concept
+Each utility (buttons, lcd, ...) is split on two parts: implementation part (portable logic) and user part (MCU or user specific handlers). For example (buttons):
+* _buttons.h, buttons.c_: logic that determines if button events should be generated (call user callbacks). User does not need to modify these files as there is no MCU-specific code (as long as library behaviour must not be changed).  
+* _buttons_user.h, buttons_user.c_: user implementation of low level GPIO read (MCU specific) and button events callback functions.  
+
 # Buttons  
 _buttons.h, buttons.c, buttons_user.h, buttons_user.c_  
 This is a generic button handling library that supports:
