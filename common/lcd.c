@@ -277,8 +277,8 @@ void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t sp
  */
 void lcd_print_int(uint8_t y, uint8_t x, int32_t number)
 {
-  char buf[50];
-  snprintf(buf, 50, "%d", (int)number);
+  char buf[_lcd_options.Cols];
+  snprintf(buf, sizeof(buf), "%d", (int)number);
   lcd_print_str(y, x, buf);
 }
 
@@ -291,8 +291,9 @@ void lcd_print_int(uint8_t y, uint8_t x, int32_t number)
  */
 void lcd_print_float(uint8_t y, uint8_t x, float number_f, uint8_t precision)
 {
-  char buf[50];
-  snprintf(buf, 50, "%.*g", precision, number_f);
+  char buf[_lcd_options.Cols];
+
+  snprintf(buf, sizeof(buf), "%.*g", precision, number_f);
   lcd_print_str(y, x, buf);
 }
 
