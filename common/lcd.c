@@ -40,11 +40,11 @@
  */
 
 /* Includes -------------------------------------*/
-#include "lcd.h"
-#include "lcd_user.h"
-
 #include <stdio.h>
 #include <string.h>
+
+#include "lcd.h"
+#include "lcd_user.h"
 
 // private functions
 void _lcd_init_pins(void);
