@@ -57,16 +57,16 @@ void _lcd_enable_pulse(void);
 /* Private variables -------------------------------------*/
 typedef struct
 {
-  uint8_t DisplayControl;
-  uint8_t DisplayFunction;
-  uint8_t DisplayMode;
-  uint8_t Rows;
-  uint8_t Cols;
-  uint8_t currentX;
-  uint8_t currentY;
-} _lcd_options_t; // private LCD structure
+  uint8_t display_ctrl;
+  uint8_t display_function;
+  uint8_t display_mode;
+  uint8_t rows;
+  uint8_t cols;
+  uint8_t current_x;
+  uint8_t current_y;
+} lcd_options_t;
 
-static _lcd_options_t _lcd_options;
+static lcd_options_t _lcd_options;
 
 /* Private defines -------------------------------------*/
 /* Commands*/
@@ -112,16 +112,16 @@ static _lcd_options_t _lcd_options;
 void lcd_init(uint8_t rows, uint8_t cols)
 {
   // Set LCD width and height
-  _lcd_options.Rows = rows;
-  _lcd_options.Cols = cols;
+  _lcd_options.rows = rows;
+  _lcd_options.cols = cols;
   // Set cursor pointer to beginning for LCD
-  _lcd_options.currentX = 0;
-  _lcd_options.currentY = 0;
+  _lcd_options.current_x = 0;
+  _lcd_options.current_y = 0;
 
-  _lcd_options.DisplayFunction = LCD_4BITMODE | LCD_5x8DOTS | LCD_1LINE;
+  _lcd_options.display_function = LCD_4BITMODE | LCD_5x8DOTS | LCD_1LINE;
   if (rows > 1)
   {
-    _lcd_options.DisplayFunction |= LCD_2LINE;
+    _lcd_options.display_function |= LCD_2LINE;
   }
 
   lcd_init_pins(); // call user pin initialization function
@@ -143,17 +143,17 @@ void lcd_init(uint8_t rows, uint8_t cols)
   lcd_delay_us(100);
 
   // Set # lines, font size, etc.
-  _lcd_send_command(LCD_FUNCTIONSET | _lcd_options.DisplayFunction);
+  _lcd_send_command(LCD_FUNCTIONSET | _lcd_options.display_function);
 
   // Turn the display on, no cursor, no blinking
-  _lcd_options.DisplayControl = LCD_DISPLAYON;
+  _lcd_options.display_ctrl = LCD_DISPLAYON;
   lcd_display_on();
 
   lcd_clear();
 
   // Default font & direction
-  _lcd_options.DisplayMode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
-  _lcd_send_command(LCD_ENTRYMODESET | _lcd_options.DisplayMode);
+  _lcd_options.display_mode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+  _lcd_send_command(LCD_ENTRYMODESET | _lcd_options.display_mode);
   lcd_delay_ms(5);
 }
 
@@ -169,41 +169,41 @@ void lcd_print_str(uint8_t y, uint8_t x, char *str)
   while (*str)
   {
 #ifdef LCD_GO_TO_NEW_LINE_IF_STRING_TOO_LONG
-    if (_lcd_options.currentX >= _lcd_options.Cols)
+    if (_lcd_options.current_x >= _lcd_options.cols)
     {
-      _lcd_options.currentX = 0;
-      _lcd_options.currentY++;
-      _lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
+      _lcd_options.current_x = 0;
+      _lcd_options.current_y++;
+      _lcd_cursor_set(_lcd_options.current_y, _lcd_options.current_x);
     }
     if (*str == '\n')
     {
-      _lcd_options.currentY++;
-      _lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
+      _lcd_options.current_y++;
+      _lcd_cursor_set(_lcd_options.current_y, _lcd_options.current_x);
     }
     else if (*str == '\r')
     {
-      _lcd_cursor_set(_lcd_options.currentY, 0);
+      _lcd_cursor_set(_lcd_options.current_y, 0);
     }
     else
     {
       _lcd_send_data(*str);
-      _lcd_options.currentX++;
+      _lcd_options.current_x++;
     }
     str++;
 #else
     if (*str == '\n')
     {
-      _lcd_options.currentY++;
-      _lcd_cursor_set(_lcd_options.currentY, _lcd_options.currentX);
+      _lcd_options.current_y++;
+      _lcd_cursor_set(_lcd_options.current_y, _lcd_options.current_x);
     }
     else if (*str == '\r')
     {
-      _lcd_cursor_set(_lcd_options.currentY, 0);
+      _lcd_cursor_set(_lcd_options.current_y, 0);
     }
     else
     {
       _lcd_send_data(*str);
-      _lcd_options.currentX++;
+      _lcd_options.current_x++;
     }
     str++;
 #endif
@@ -234,7 +234,7 @@ void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t sp
     {
       _lcd_send_data(*_str);
 
-      _lcd_options.currentX++;
+      _lcd_options.current_x++;
       _str_character_number++;
       _str++;
     }
@@ -252,7 +252,7 @@ void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t sp
       while (_window_character_number < window_size)
       {                             // while character number is smaller than window size
         _lcd_send_data(*_str);      // print character
-        _lcd_options.currentX++;    // increment x position
+        _lcd_options.current_x++;   // increment x position
         _window_character_number++; // increment position in window
         _str++;                     // increment starting character
       }
@@ -277,7 +277,7 @@ void lcd_print_str_window(uint8_t y, uint8_t x, uint8_t window_size, uint16_t sp
  */
 void lcd_print_int(uint8_t y, uint8_t x, int32_t number)
 {
-  char buf[_lcd_options.Cols];
+  char buf[_lcd_options.cols];
   snprintf(buf, sizeof(buf), "%d", (int)number);
   lcd_print_str(y, x, buf);
 }
@@ -291,7 +291,7 @@ void lcd_print_int(uint8_t y, uint8_t x, int32_t number)
  */
 void lcd_print_float(uint8_t y, uint8_t x, float number_f, uint8_t precision)
 {
-  char buf[_lcd_options.Cols];
+  char buf[_lcd_options.cols];
 
   snprintf(buf, sizeof(buf), "%.*g", precision, number_f);
   lcd_print_str(y, x, buf);
@@ -315,38 +315,38 @@ void lcd_clear_area(uint8_t y, uint8_t x_start, uint8_t x_end)
 
 void lcd_display_on(void)
 {
-  _lcd_options.DisplayControl |= LCD_DISPLAYON;
-  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
+  _lcd_options.display_ctrl |= LCD_DISPLAYON;
+  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.display_ctrl);
 }
 
 void lcd_display_off(void)
 {
-  _lcd_options.DisplayControl &= ~LCD_DISPLAYON;
-  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
+  _lcd_options.display_ctrl &= ~LCD_DISPLAYON;
+  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.display_ctrl);
 }
 
 void lcd_blink_on(void)
 {
-  _lcd_options.DisplayControl |= LCD_BLINKON;
-  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
+  _lcd_options.display_ctrl |= LCD_BLINKON;
+  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.display_ctrl);
 }
 
 void lcd_blink_off(void)
 {
-  _lcd_options.DisplayControl &= ~LCD_BLINKON;
-  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
+  _lcd_options.display_ctrl &= ~LCD_BLINKON;
+  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.display_ctrl);
 }
 
 void lcd_cursor_on(void)
 {
-  _lcd_options.DisplayControl |= LCD_CURSORON;
-  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
+  _lcd_options.display_ctrl |= LCD_CURSORON;
+  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.display_ctrl);
 }
 
 void lcd_cursor_off(void)
 {
-  _lcd_options.DisplayControl &= ~LCD_CURSORON;
-  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.DisplayControl);
+  _lcd_options.display_ctrl &= ~LCD_CURSORON;
+  _lcd_send_command(LCD_DISPLAYCONTROL | _lcd_options.display_ctrl);
 }
 
 void lcd_scroll_left(void)
@@ -429,14 +429,14 @@ void _lcd_cursor_set(uint8_t row, uint8_t col)
   uint8_t row_offsets[] = {0x00, 0x40, 0x14, 0x54};
 
   /* Go to beginning */
-  if (row >= _lcd_options.Rows)
+  if (row >= _lcd_options.rows)
   {
     row = 0;
   }
 
   /* Set current column and row */
-  _lcd_options.currentX = col;
-  _lcd_options.currentY = row;
+  _lcd_options.current_x = col;
+  _lcd_options.current_y = row;
 
   /* Set location address */
   _lcd_send_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
