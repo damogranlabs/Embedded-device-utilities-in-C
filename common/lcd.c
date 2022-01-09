@@ -39,7 +39,7 @@
  lcd_put_char(0, 9, 0);
  */
 
-/* Includes -------------------------------------*/
+// Includes -------------------------------------
 #include <stdio.h>
 #include <string.h>
 
@@ -54,7 +54,7 @@ void _lcd_send_data(uint8_t data);
 void _lcd_cursor_set(uint8_t row, uint8_t col);
 void _lcd_enable_pulse(void);
 
-/* Private variables -------------------------------------*/
+// Private variables
 typedef struct
 {
   uint8_t display_ctrl;
@@ -68,8 +68,8 @@ typedef struct
 
 static lcd_options_t _lcd_options;
 
-/* Private defines -------------------------------------*/
-/* Commands*/
+// Private defines -------------------------------------*/
+// Commands
 #define LCD_CLEARDISPLAY 0x01
 #define LCD_RETURNHOME 0x02
 #define LCD_ENTRYMODESET 0x04
@@ -79,24 +79,24 @@ static lcd_options_t _lcd_options;
 #define LCD_SETCGRAMADDR 0x40
 #define LCD_SETDDRAMADDR 0x80
 
-/* Flags for display entry mode */
+// Flags for display entry mode
 #define LCD_ENTRYRIGHT 0x00
 #define LCD_ENTRYLEFT 0x02
 #define LCD_ENTRYSHIFTINCREMENT 0x01
 #define LCD_ENTRYSHIFTDECREMENT 0x00
 
-/* Flags for display on/off control */
+// Flags for display on/off control
 #define LCD_DISPLAYON 0x04
 #define LCD_CURSORON 0x02
 #define LCD_BLINKON 0x01
 
-/* Flags for display/cursor shift */
+// Flags for display/cursor shift
 #define LCD_DISPLAYMOVE 0x08
 #define LCD_CURSORMOVE 0x00
 #define LCD_MOVERIGHT 0x04
 #define LCD_MOVELEFT 0x00
 
-/* Flags for function set */
+// Flags for function set
 #define LCD_8BITMODE 0x10
 #define LCD_4BITMODE 0x00
 #define LCD_2LINE 0x08
@@ -126,19 +126,19 @@ void lcd_init(uint8_t rows, uint8_t cols)
 
   lcd_init_pins(); // call user pin initialization function
 
-  /* Try to set 4bit mode */
+  // Try to set 4bit mode
   _lcd_send_command_4_bit(0x03);
   lcd_delay_ms(5);
 
-  /* Second try */
+  // Second try
   _lcd_send_command_4_bit(0x03);
   lcd_delay_ms(5);
 
-  /* Third go! */
+  // Third go!
   _lcd_send_command_4_bit(0x03);
   lcd_delay_ms(5);
 
-  /* Set 4-bit interface */
+  // Set 4-bit interface
   _lcd_send_command_4_bit(0x02);
   lcd_delay_us(100);
 
@@ -368,7 +368,7 @@ void lcd_scroll_right(void)
 void lcd_create_char(uint8_t location, uint8_t *data)
 {
   uint8_t i;
-  /* We have 8 locations available for custom characters */
+  // We have 8 locations available for custom characters
   location &= 0x07;
   _lcd_send_command(LCD_SETCGRAMADDR | (location << 3));
 
@@ -390,32 +390,32 @@ void lcd_put_char(uint8_t y, uint8_t x, uint8_t location)
   _lcd_send_data(location);
 }
 
-/* Private functions */
+// Private functions
 void _lcd_send_command(uint8_t cmd)
 {
-  /* Command mode */
+  // Command mode
   lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, false);
 
-  /* High nibble */
+  // High nibble
   _lcd_send_command_4_bit(cmd >> 4);
-  /* Low nibble */
+  // Low nibble
   _lcd_send_command_4_bit(cmd & 0x0F);
 }
 
 void _lcd_send_data(uint8_t data)
 {
-  /* Data mode */
+  // Data mode
   lcd_write_pin(LCD_RS_GPIO_Port, LCD_RS_Pin, true);
 
-  /* High nibble */
+  // High nibble
   _lcd_send_command_4_bit(data >> 4);
-  /* Low nibble */
+  // Low nibble
   _lcd_send_command_4_bit(data & 0x0F);
 }
 
 void _lcd_send_command_4_bit(uint8_t cmd)
 {
-  /* Set output port */
+  // Set output port
   lcd_write_pin(LCD_D7_GPIO_Port, LCD_D7_Pin, (bool)(cmd & 0x08));
   lcd_write_pin(LCD_D6_GPIO_Port, LCD_D6_Pin, (bool)(cmd & 0x04));
   lcd_write_pin(LCD_D5_GPIO_Port, LCD_D5_Pin, (bool)(cmd & 0x02));
@@ -428,17 +428,17 @@ void _lcd_cursor_set(uint8_t row, uint8_t col)
 {
   uint8_t row_offsets[] = {0x00, 0x40, 0x14, 0x54};
 
-  /* Go to beginning */
+  // Go to beginning
   if (row >= _lcd_options.rows)
   {
     row = 0;
   }
 
-  /* Set current column and row */
+  // Set current column and row
   _lcd_options.current_x = col;
   _lcd_options.current_y = row;
 
-  /* Set location address */
+  // Set location address
   _lcd_send_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
