@@ -45,7 +45,7 @@ btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg)
 }
 
 /**
- * @brief On press (short, repetitive) button callback
+ * @brief On press (short, repetitive) button callback.
  * @param *btn_cfg Button configuration structure that triggered the event.
  * @retval None.
  * TODO: user can add actions on button events here.
@@ -54,11 +54,11 @@ void on_button_press(btn_cfg_t *btn_cfg)
 {
   if ((btn_cfg->gpio_port == B1_GPIO_Port) && (btn_cfg->gpio_pin == B1_Pin))
   {
-    //printString("B1");
+    // printString("B1 press");
   }
   if ((btn_cfg->gpio_port == B2_GPIO_Port) && (btn_cfg->gpio_pin == B2_Pin))
   {
-    //printString("B2");
+    // printString("B2 press");
   }
 }
 
@@ -77,5 +77,31 @@ void on_button_longpress(btn_cfg_t *btn_cfg)
   if ((btn_cfg->gpio_port == B2_GPIO_Port) && (btn_cfg->gpio_pin == B2_Pin))
   {
     // printString("B2 L");
+  }
+}
+
+/**
+ * @brief On release (short, repetitive or longpress) button callback.
+ * @param *btn_cfg Button configuration structure that triggered the event.
+ * @param state: button state before release event was triggered.
+ * @retval None.
+ * TODO: user can add actions on button events here.
+ */
+void on_button_release(btn_cfg_t *btn_cfg, btn_state_t state)
+{
+  if ((btn_cfg->gpio_port == B1_GPIO_Port) && (btn_cfg->gpio_pin == B1_Pin))
+  {
+    if (state == BTN_STATE_PRESS)
+    {
+      // printString("B1 press release");
+    }
+    else if (state == BTN_STATE_LONGPRESS)
+    {
+      // printString("B1 longpress release");
+    }
+  }
+  if ((btn_cfg->gpio_port == B2_GPIO_Port) && (btn_cfg->gpio_pin == B2_Pin))
+  {
+    // printString("B2 press (short/long) release");
   }
 }

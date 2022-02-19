@@ -56,7 +56,11 @@ button_t *register_button(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_p
 
 uint32_t get_milliseconds(void);
 btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg);
+
+bool is_button_still_pressed(button_t *btn);
+
 void on_button_press(btn_cfg_t *btn_cfg);
 void on_button_longpress(btn_cfg_t *btn_cfg);
+void on_button_release(btn_cfg_t *btn_cfg, btn_state_t state);
 
 #endif

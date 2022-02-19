@@ -81,7 +81,7 @@ void handle_buttons(void)
           }
           break;
 
-        case BTN_STATE_LONGPRESS: //long press mode is not repetitive
+        case BTN_STATE_LONGPRESS: // long press mode is not repetitive
         default:
           break;
         }
@@ -89,7 +89,7 @@ void handle_buttons(void)
       else
       {
         // button is not pressed: could be glitch to debounce it or button release
-        //is not active, but start timestamp exists - debounce if state != IDLE
+        // is not active, but start timestamp exists - debounce if state != IDLE
         if (btn->button_state == BTN_STATE_IDLE)
         {
           // pulses to debounce on button press or other button line spikes
@@ -104,6 +104,7 @@ void handle_buttons(void)
         else
         {
           // state != IDLE, reset button tracking
+          on_button_release(&btn->button_cfg, btn->button_state);
           btn->button_state = BTN_STATE_IDLE;
           btn->first_change_timestamp = 0;
           btn->last_event_timestamp = timestamp; // avoid immediate re-trigger on phy on->off glitches
@@ -114,10 +115,30 @@ void handle_buttons(void)
 }
 
 /**
+ * @brief Return true if button is still pressed (after press event was already registered and
+ *        `on_button_press` callback executed.
+ * @param btn: Pointer to a created button data structure.
+ * @retval `true` if still pressed, `false` otherwise.
+ */
+bool is_button_still_pressed(button_t *btn)
+{
+  if (btn->button_state != BTN_STATE_IDLE)
+  {
+    if (btn->button_phy_state == BTN_PHY_ACTIVE)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * @brief Add (register) button to a list of available buttons.
- * @param Registered button GPIO port.
- * @param Registered button GPIO pin.
- * @retval None
+ * @param port: Registered button GPIO port.
+ * @param pin:Registered button GPIO pin.
+ * @param press_mode: Button press mode selector.
+ * @retval Pointer to a created button data structure.
  */
 button_t *register_button(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode)
 {
