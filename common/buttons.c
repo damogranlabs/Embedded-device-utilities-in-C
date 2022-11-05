@@ -117,7 +117,7 @@ void btn_handle(button_t buttons[])
 
 /**
  * @brief Return true if button is still pressed (after press event was already registered and
- *        `on_button_press` callback executed.
+ *        `btn_on_press` callback executed.
  * @param btn: Pointer to a created button data structure.
  * @retval `true` if still pressed, `false` otherwise.
  */
