@@ -57,7 +57,7 @@ bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_
 uint8_t get_registered_buttons_num(void);
 
 uint32_t get_milliseconds(void);
-btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg);
+btn_phy_state_t get_button_pin_state(btn_cfg_t *cfg);
 
 bool is_button_still_pressed(button_t *btn);
 

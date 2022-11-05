@@ -25,14 +25,14 @@ uint32_t get_milliseconds(void)
 
 /**
  * @brief Low level call to get actual pin state.
- * @param btn_cfg: Registered button configuration structure.
+ * @param cfg: Registered button configuration structure.
  * @retval BTN_PHY_ACTIVE on button press, BTN_PHY_IDLE otherwise.
  * TODO: user must implement this function to return button state.
  */
-btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg)
+btn_phy_state_t get_button_pin_state(btn_cfg_t *cfg)
 {
-  uint32_t port_state = LL_GPIO_ReadInputPort(btn_cfg->gpio_port);
-  uint32_t pin_state = READ_BIT(port_state, btn_cfg->gpio_pin);
+  uint32_t port_state = LL_GPIO_ReadInputPort(cfg->gpio_port);
+  uint32_t pin_state = READ_BIT(port_state, cfg->gpio_pin);
 
   if (pin_state == 0)
   {
@@ -51,11 +51,11 @@ btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg)
  */
 void on_button_press(button_t *btn)
 {
-  if ((btn->btn_cfg.gpio_port == B1_GPIO_Port) && (btn->btn_cfg.gpio_pin == B1_Pin))
+  if ((btn->cfg.gpio_port == B1_GPIO_Port) && (btn->cfg.gpio_pin == B1_Pin))
   {
     // printString("B1 press");
   }
-  if ((btn->btn_cfg.gpio_port == B2_GPIO_Port) && (btn->btn_cfg.gpio_pin == B2_Pin))
+  if ((btn->cfg.gpio_port == B2_GPIO_Port) && (btn->cfg.gpio_pin == B2_Pin))
   {
     // printString("B2 press");
   }
@@ -68,11 +68,11 @@ void on_button_press(button_t *btn)
  */
 void on_button_press(button_t *btn)
 {
-  if ((btn->btn_cfg.gpio_port == B1_GPIO_Port) && (btn->btn_cfg.gpio_pin == B1_Pin))
+  if ((btn->cfg.gpio_port == B1_GPIO_Port) && (btn->cfg.gpio_pin == B1_Pin))
   {
     // printString("B1 L");
   }
-  if ((btn->btn_cfg.gpio_port == B2_GPIO_Port) && (btn->btn_cfg.gpio_pin == B2_Pin))
+  if ((btn->cfg.gpio_port == B2_GPIO_Port) && (btn->cfg.gpio_pin == B2_Pin))
   {
     // printString("B2 L");
   }
@@ -85,7 +85,7 @@ void on_button_press(button_t *btn)
  */
 void on_button_release(button_t *btn)
 {
-  if ((btn->btn_cfg.gpio_port == B1_GPIO_Port) && (btn->btn_cfg.gpio_pin == B1_Pin))
+  if ((btn->cfg.gpio_port == B1_GPIO_Port) && (btn->cfg.gpio_pin == B1_Pin))
   {
     if (state == BTN_STATE_PRESS)
     {
