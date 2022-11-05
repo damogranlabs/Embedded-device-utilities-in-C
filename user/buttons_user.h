@@ -8,7 +8,7 @@
 #ifndef __BUTTONS_USER_H
 #define __BUTTONS_USER_H
 
-#include "stdint.h"
+#include <stdint.h>
 
 // add device/project specific includes
 #include "stm32l1xx.h"
