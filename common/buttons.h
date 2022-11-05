@@ -59,11 +59,11 @@ uint8_t get_registered_buttons_num(void);
 uint32_t btn_get_milliseconds(void);
 btn_phy_state_t btn_get_pin_state(btn_cfg_t *cfg);
 
-bool btn_is_still_pressed(button_t *btn);
-
 void btn_on_press(button_t *btn);
 void btn_on_longpress(button_t *btn);
 void btn_on_release(button_t *btn);
+
+bool btn_is_still_pressed(button_t *btn);
 
 void btn_reset_timestamps(button_t buttons[]);
 
