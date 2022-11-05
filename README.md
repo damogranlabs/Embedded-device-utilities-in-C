@@ -44,7 +44,7 @@ This is a generic LCD HD44780-based library that supports:
 * creating and printing custom characters
 * controlling of LCD settings like: display on/off, cursor blinking on/off, scrolling, clearing
 
-# ROTARY ENCODER
+# Rotary encoder
 _rot\_enc.h, rot\_enc.c, rot\_enc\_user.h, rot\_enc\_user.c_  
 This is a generic, single-interrupt based library to handle basic three-pin (2 GPIO + common pin) rotary encoder.
 Library supports: 
