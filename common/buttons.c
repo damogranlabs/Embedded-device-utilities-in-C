@@ -18,17 +18,17 @@ static uint8_t _num_of_registered_buttons = 0; // private: number of currently r
  * @param buttons: an array of registered buttons.
  * @retval None
  */
-void handle_buttons(button_t buttons[])
+void btn_handle(button_t buttons[])
 {
   uint8_t btn_num;
   btn_phy_state_t phy_state;
   button_t *btn;
-  uint32_t timestamp = get_milliseconds();
+  uint32_t timestamp = btn_get_milliseconds();
 
   for (btn_num = 0; btn_num < _num_of_registered_buttons; btn_num++)
   {
     btn = &buttons[btn_num];
-    phy_state = get_button_pin_state(&btn->cfg);
+    phy_state = btn_get_pin_state(&btn->cfg);
     btn->phy_state = phy_state;
 
     if (btn->first_change_timestamp == 0)
@@ -55,7 +55,7 @@ void handle_buttons(button_t buttons[])
           if (timestamp > (btn->first_change_timestamp + BTN_PRESS_TIME_MS))
           {
             btn->state = BTN_STATE_PRESS;
-            on_button_press(btn);
+            btn_on_press(btn);
             btn->last_event_timestamp = timestamp;
           }
           break;
@@ -67,7 +67,7 @@ void handle_buttons(button_t buttons[])
             if (timestamp > (btn->first_change_timestamp + BTN_LONGPRESS_TIME_MS))
             {
               btn->state = BTN_STATE_LONGPRESS;
-              on_button_longpress(btn);
+              btn_on_longpress(btn);
               btn->last_event_timestamp = timestamp;
             }
           }
@@ -76,7 +76,7 @@ void handle_buttons(button_t buttons[])
             // button already pressed, repetitive mode: check if new 'on press' event should be triggered
             if (timestamp > (btn->last_event_timestamp + BTN_REPETITIVE_PRESS_TIME_MS))
             {
-              on_button_press(btn);
+              btn_on_press(btn);
               btn->last_event_timestamp = timestamp;
             }
           }
@@ -105,7 +105,7 @@ void handle_buttons(button_t buttons[])
         else
         {
           // state != IDLE, reset button tracking
-          on_button_release(btn);
+          btn_on_release(btn);
           btn->state = BTN_STATE_IDLE;
           btn->first_change_timestamp = 0;
           btn->last_event_timestamp = timestamp; // avoid immediate re-trigger on phy on->off glitches
@@ -121,7 +121,7 @@ void handle_buttons(button_t buttons[])
  * @param btn: Pointer to a created button data structure.
  * @retval `true` if still pressed, `false` otherwise.
  */
-bool is_button_still_pressed(button_t *btn)
+bool btn_is_still_pressed(button_t *btn)
 {
   if (btn->state != BTN_STATE_IDLE)
   {
@@ -143,7 +143,7 @@ bool is_button_still_pressed(button_t *btn)
  * @retval True on success, false on invalid (too much) registered buttons.
  *    Check NUM_OF_BUTTONS define.
  */
-bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode)
+bool btn_register(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode)
 {
   if (_num_of_registered_buttons >= NUM_OF_BUTTONS)
   {
@@ -158,7 +158,7 @@ bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_
 
   btn->state = BTN_STATE_IDLE;
   btn->first_change_timestamp = 0;
-  btn->phy_state = get_button_pin_state(&btn->cfg);
+  btn->phy_state = btn_get_pin_state(&btn->cfg);
 
   _num_of_registered_buttons++;
 
@@ -179,7 +179,7 @@ uint8_t get_registered_buttons_num(void)
  *  handling milliseconds timer overflow.
  * @param buttons: array of buttons to reset timestamps.
  */
-void reset_timestamps(button_t buttons[])
+void btn_reset_timestamps(button_t buttons[])
 {
   uint8_t btn_num;
   button_t *btn;

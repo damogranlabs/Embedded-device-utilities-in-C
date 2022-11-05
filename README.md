@@ -15,9 +15,9 @@ This is a generic button handling library that supports:
 * generic code, that is easily portable on any device
 * simple API that does not require interrupts or special timers (rely on systick/generic millisecond timer):
     * user need to add only low layer function call to get GPIO state
-    * register new button with `register_button()`
-    * handle buttons with `handle_buttons()`
-    * handle events in functions: `on_button_press()` and `on_button_longpress()` in user-specific files
+    * register new button with `btn_register()`
+    * handle buttons with `btn_handle()`
+    * handle events in functions: `btn_on_press()` and `btn_on_longpress()` in user-specific files
 
 # Ring buffer  
 _ring_buffer.h, ring_buffer.c_  

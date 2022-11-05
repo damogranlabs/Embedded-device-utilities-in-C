@@ -28,9 +28,9 @@ typedef enum
 
 typedef enum
 {
-  BTN_MODE_SINGLEPRESS, // only one on_button_press() call is generated per press
-  BTN_MODE_REPETITIVE,  // multiple on_button_press() calls are generated while button is pressed.
-  BTN_MODE_LONGPRESS    // after on_button_press() call is generated, on_button_longpress() call can be generated.
+  BTN_MODE_SINGLEPRESS, // only one btn_on_press() call is generated per press
+  BTN_MODE_REPETITIVE,  // multiple btn_on_press() calls are generated while button is pressed.
+  BTN_MODE_LONGPRESS    // after btn_on_press() call is generated, btn_on_longpress() call can be generated.
 } btn_press_mode_t;
 
 typedef struct
@@ -51,20 +51,20 @@ typedef struct
   uint32_t last_event_timestamp;
 } button_t;
 
-void handle_buttons(button_t buttons[]);
+void btn_handle(button_t buttons[]);
 
-bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode);
+bool btn_register(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode);
 uint8_t get_registered_buttons_num(void);
 
-uint32_t get_milliseconds(void);
-btn_phy_state_t get_button_pin_state(btn_cfg_t *cfg);
+uint32_t btn_get_milliseconds(void);
+btn_phy_state_t btn_get_pin_state(btn_cfg_t *cfg);
 
-bool is_button_still_pressed(button_t *btn);
+bool btn_is_still_pressed(button_t *btn);
 
-void on_button_press(button_t *btn);
-void on_button_longpress(button_t *btn);
-void on_button_release(button_t *btn);
+void btn_on_press(button_t *btn);
+void btn_on_longpress(button_t *btn);
+void btn_on_release(button_t *btn);
 
-void reset_timestamps(button_t buttons[]);
+void btn_reset_timestamps(button_t buttons[]);
 
 #endif

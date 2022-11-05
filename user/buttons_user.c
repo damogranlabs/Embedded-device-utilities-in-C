@@ -18,7 +18,7 @@
  * @retval Milliseconds value.
  * TODO: user must implement this function to return milliseconds (systick) value.
  */
-uint32_t get_milliseconds(void)
+uint32_t btn_get_milliseconds(void)
 {
   return HAL_GetTick();
 }
@@ -29,7 +29,7 @@ uint32_t get_milliseconds(void)
  * @retval BTN_PHY_ACTIVE on button press, BTN_PHY_IDLE otherwise.
  * TODO: user must implement this function to return button state.
  */
-btn_phy_state_t get_button_pin_state(btn_cfg_t *cfg)
+btn_phy_state_t btn_get_pin_state(btn_cfg_t *cfg)
 {
   uint32_t port_state = LL_GPIO_ReadInputPort(cfg->gpio_port);
   uint32_t pin_state = READ_BIT(port_state, cfg->gpio_pin);
@@ -49,7 +49,7 @@ btn_phy_state_t get_button_pin_state(btn_cfg_t *cfg)
  * @param btn: Button configuration structure that triggered the event.
  * TODO: user can add actions on button events here.
  */
-void on_button_press(button_t *btn)
+void btn_on_press(button_t *btn)
 {
   if ((btn->cfg.gpio_port == B1_GPIO_Port) && (btn->cfg.gpio_pin == B1_Pin))
   {
@@ -66,7 +66,7 @@ void on_button_press(button_t *btn)
  * @param btn Button configuration structure that triggered the event.
  * TODO: user can add actions on button events here.
  */
-void on_button_press(button_t *btn)
+void btn_on_press(button_t *btn)
 {
   if ((btn->cfg.gpio_port == B1_GPIO_Port) && (btn->cfg.gpio_pin == B1_Pin))
   {
@@ -83,7 +83,7 @@ void on_button_press(button_t *btn)
  * @param btn Button configuration structure that triggered the event.
  * TODO: user can add actions on button events here.
  */
-void on_button_release(button_t *btn)
+void btn_on_release(button_t *btn)
 {
   if ((btn->cfg.gpio_port == B1_GPIO_Port) && (btn->cfg.gpio_pin == B1_Pin))
   {
