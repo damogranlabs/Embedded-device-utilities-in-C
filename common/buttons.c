@@ -28,7 +28,7 @@ void handle_buttons(button_t buttons[])
   for (btn_num = 0; btn_num < _num_of_registered_buttons; btn_num++)
   {
     btn = &buttons[btn_num];
-    phy_state = get_button_pin_state(&btn->button_cfg);
+    phy_state = get_button_pin_state(&btn->cfg);
     btn->button_phy_state = phy_state;
 
     if (btn->first_change_timestamp == 0)
@@ -62,7 +62,7 @@ void handle_buttons(button_t buttons[])
 
         case BTN_STATE_PRESS:
           // button already pressed, handle depending on a button mode
-          if (btn->button_cfg.press_mode == BTN_MODE_LONGPRESS)
+          if (btn->cfg.press_mode == BTN_MODE_LONGPRESS)
           {
             if (timestamp > (btn->first_change_timestamp + BTN_LONGPRESS_TIME_MS))
             {
@@ -71,7 +71,7 @@ void handle_buttons(button_t buttons[])
               btn->last_event_timestamp = timestamp;
             }
           }
-          else if (btn->button_cfg.press_mode == BTN_MODE_REPETITIVE)
+          else if (btn->cfg.press_mode == BTN_MODE_REPETITIVE)
           {
             // button already pressed, repetitive mode: check if new 'on press' event should be triggered
             if (timestamp > (btn->last_event_timestamp + BTN_REPETITIVE_PRESS_TIME_MS))
@@ -152,13 +152,13 @@ bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_
   button_t *btn = &buttons[_num_of_registered_buttons];
   btn->idx = _num_of_registered_buttons;
 
-  btn->button_cfg.gpio_port = port;
-  btn->button_cfg.gpio_pin = pin;
-  btn->button_cfg.press_mode = press_mode;
+  btn->cfg.gpio_port = port;
+  btn->cfg.gpio_pin = pin;
+  btn->cfg.press_mode = press_mode;
 
   btn->button_state = BTN_STATE_IDLE;
   btn->first_change_timestamp = 0;
-  btn->button_phy_state = get_button_pin_state(&btn->button_cfg);
+  btn->button_phy_state = get_button_pin_state(&btn->cfg);
 
   _num_of_registered_buttons++;
 
