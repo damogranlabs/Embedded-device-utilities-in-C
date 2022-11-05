@@ -173,3 +173,21 @@ uint8_t get_registered_buttons_num(void)
 {
   return _num_of_registered_buttons;
 }
+
+/**
+ * @brief Reset internal timestamps of all registered buttons. Necessary when
+ *  handling milliseconds timer overflow.
+ * @param buttons: array of buttons to reset timestamps.
+ */
+void reset_timestamps(button_t buttons[])
+{
+  uint8_t btn_num;
+  button_t *btn;
+
+  for (btn_num = 0; btn_num < _num_of_registered_buttons; btn_num++)
+  {
+    btn = &buttons[btn_num];
+    btn->last_event_timestamp = 0;
+    btn->first_change_timestamp = 0;
+  }
+}

@@ -65,4 +65,6 @@ void on_button_press(button_t *btn);
 void on_button_longpress(button_t *btn);
 void on_button_release(button_t *btn);
 
+void reset_timestamps(button_t buttons[]);
+
 #endif
