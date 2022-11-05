@@ -44,8 +44,8 @@ typedef struct
 {
   uint8_t idx;
   btn_cfg_t cfg;
-  btn_state_t button_state;
-  btn_phy_state_t button_phy_state;
+  btn_state_t state;
+  btn_phy_state_t phy_state;
 
   uint32_t first_change_timestamp;
   uint32_t last_event_timestamp;

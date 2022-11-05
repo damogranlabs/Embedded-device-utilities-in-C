@@ -29,7 +29,7 @@ void handle_buttons(button_t buttons[])
   {
     btn = &buttons[btn_num];
     phy_state = get_button_pin_state(&btn->cfg);
-    btn->button_phy_state = phy_state;
+    btn->phy_state = phy_state;
 
     if (btn->first_change_timestamp == 0)
     {
@@ -48,13 +48,13 @@ void handle_buttons(button_t buttons[])
       // button timestamp exists, check state and time
       if (phy_state == BTN_PHY_ACTIVE)
       {
-        switch (btn->button_state)
+        switch (btn->state)
         {
         case BTN_STATE_IDLE:
           // first event on this button
           if (timestamp > (btn->first_change_timestamp + BTN_PRESS_TIME_MS))
           {
-            btn->button_state = BTN_STATE_PRESS;
+            btn->state = BTN_STATE_PRESS;
             on_button_press(btn);
             btn->last_event_timestamp = timestamp;
           }
@@ -66,7 +66,7 @@ void handle_buttons(button_t buttons[])
           {
             if (timestamp > (btn->first_change_timestamp + BTN_LONGPRESS_TIME_MS))
             {
-              btn->button_state = BTN_STATE_LONGPRESS;
+              btn->state = BTN_STATE_LONGPRESS;
               on_button_longpress(btn);
               btn->last_event_timestamp = timestamp;
             }
@@ -91,7 +91,7 @@ void handle_buttons(button_t buttons[])
       {
         // button is not pressed: could be glitch to debounce it or button release
         // is not active, but start timestamp exists - debounce if state != IDLE
-        if (btn->button_state == BTN_STATE_IDLE)
+        if (btn->state == BTN_STATE_IDLE)
         {
           // pulses to debounce on button press or other button line spikes
           if (timestamp > (btn->first_change_timestamp + BTN_PRESS_TIME_MS))
@@ -106,7 +106,7 @@ void handle_buttons(button_t buttons[])
         {
           // state != IDLE, reset button tracking
           on_button_release(btn);
-          btn->button_state = BTN_STATE_IDLE;
+          btn->state = BTN_STATE_IDLE;
           btn->first_change_timestamp = 0;
           btn->last_event_timestamp = timestamp; // avoid immediate re-trigger on phy on->off glitches
         }
@@ -123,9 +123,9 @@ void handle_buttons(button_t buttons[])
  */
 bool is_button_still_pressed(button_t *btn)
 {
-  if (btn->button_state != BTN_STATE_IDLE)
+  if (btn->state != BTN_STATE_IDLE)
   {
-    if (btn->button_phy_state == BTN_PHY_ACTIVE)
+    if (btn->phy_state == BTN_PHY_ACTIVE)
     {
       return true;
     }
@@ -156,9 +156,9 @@ bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_
   btn->cfg.gpio_pin = pin;
   btn->cfg.press_mode = press_mode;
 
-  btn->button_state = BTN_STATE_IDLE;
+  btn->state = BTN_STATE_IDLE;
   btn->first_change_timestamp = 0;
-  btn->button_phy_state = get_button_pin_state(&btn->cfg);
+  btn->phy_state = get_button_pin_state(&btn->cfg);
 
   _num_of_registered_buttons++;
 
