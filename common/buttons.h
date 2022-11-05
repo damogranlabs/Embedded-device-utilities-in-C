@@ -8,8 +8,8 @@
 #ifndef __BUTTONS_H
 #define __BUTTONS_H
 
-#include "stdint.h"
-#include "stdbool.h"
+#include <stdint.h>
+#include <stdbool.h>
 
 #include "buttons_user.h"
 
@@ -42,6 +42,7 @@ typedef struct
 
 typedef struct
 {
+  uint8_t idx;
   btn_cfg_t button_cfg;
   btn_state_t button_state;
   btn_phy_state_t button_phy_state;
@@ -50,17 +51,18 @@ typedef struct
   uint32_t last_event_timestamp;
 } button_t;
 
-void handle_buttons(void);
+void handle_buttons(button_t buttons[]);
 
-button_t *register_button(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode);
+bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode);
+uint8_t get_registered_buttons_num(void);
 
 uint32_t get_milliseconds(void);
 btn_phy_state_t get_button_pin_state(btn_cfg_t *btn_cfg);
 
 bool is_button_still_pressed(button_t *btn);
 
-void on_button_press(btn_cfg_t *btn_cfg);
-void on_button_longpress(btn_cfg_t *btn_cfg);
-void on_button_release(btn_cfg_t *btn_cfg, btn_state_t state);
+void on_button_press(button_t *btn);
+void on_button_longpress(button_t *btn);
+void on_button_release(button_t *btn);
 
 #endif

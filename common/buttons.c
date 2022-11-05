@@ -5,19 +5,20 @@
  * @source  http://damogranlabs.com/
  *          https://github.com/damogranlabs/Embedded-device-utilities-in-C
  */
+#include <stdlib.h>
+
 #include "buttons.h"
 #include "buttons_user.h"
 
-button_t _buttons[NUM_OF_BUTTONS];      // private: store pointers to buttons description structures.
-uint8_t _num_of_registered_buttons = 0; // private: number of currently registered buttons.
+static uint8_t _num_of_registered_buttons = 0; // private: number of currently registered buttons.
 
 /**
  * @brief Handle buttons state. This function must be periodically called in a main while loop.
  *        This function calls event callbacks in buttons_user.c
- * @param None
+ * @param buttons: an array of registered buttons.
  * @retval None
  */
-void handle_buttons(void)
+void handle_buttons(button_t buttons[])
 {
   uint8_t btn_num;
   btn_phy_state_t phy_state;
@@ -26,7 +27,7 @@ void handle_buttons(void)
 
   for (btn_num = 0; btn_num < _num_of_registered_buttons; btn_num++)
   {
-    btn = &_buttons[btn_num];
+    btn = &buttons[btn_num];
     phy_state = get_button_pin_state(&btn->button_cfg);
     btn->button_phy_state = phy_state;
 
@@ -54,7 +55,7 @@ void handle_buttons(void)
           if (timestamp > (btn->first_change_timestamp + BTN_PRESS_TIME_MS))
           {
             btn->button_state = BTN_STATE_PRESS;
-            on_button_press(&btn->button_cfg);
+            on_button_press(btn);
             btn->last_event_timestamp = timestamp;
           }
           break;
@@ -66,7 +67,7 @@ void handle_buttons(void)
             if (timestamp > (btn->first_change_timestamp + BTN_LONGPRESS_TIME_MS))
             {
               btn->button_state = BTN_STATE_LONGPRESS;
-              on_button_longpress(&btn->button_cfg);
+              on_button_longpress(btn);
               btn->last_event_timestamp = timestamp;
             }
           }
@@ -75,7 +76,7 @@ void handle_buttons(void)
             // button already pressed, repetitive mode: check if new 'on press' event should be triggered
             if (timestamp > (btn->last_event_timestamp + BTN_REPETITIVE_PRESS_TIME_MS))
             {
-              on_button_press(&btn->button_cfg);
+              on_button_press(btn);
               btn->last_event_timestamp = timestamp;
             }
           }
@@ -104,7 +105,7 @@ void handle_buttons(void)
         else
         {
           // state != IDLE, reset button tracking
-          on_button_release(&btn->button_cfg, btn->button_state);
+          on_button_release(btn);
           btn->button_state = BTN_STATE_IDLE;
           btn->first_change_timestamp = 0;
           btn->last_event_timestamp = timestamp; // avoid immediate re-trigger on phy on->off glitches
@@ -135,23 +136,40 @@ bool is_button_still_pressed(button_t *btn)
 
 /**
  * @brief Add (register) button to a list of available buttons.
+ * @param buttons: array of buttons where new button data will get initialized.
  * @param port: Registered button GPIO port.
  * @param pin:Registered button GPIO pin.
  * @param press_mode: Button press mode selector.
- * @retval Pointer to a created button data structure.
+ * @retval True on success, false on invalid (too much) registered buttons.
+ *    Check NUM_OF_BUTTONS define.
  */
-button_t *register_button(BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode)
+bool register_button(button_t buttons[], BTN_GPIO_PORT_TYPE *port, BTN_GPIO_PIN_TYPE pin, btn_press_mode_t press_mode)
 {
-  _buttons[_num_of_registered_buttons].button_cfg.gpio_port = port;
-  _buttons[_num_of_registered_buttons].button_cfg.gpio_pin = pin;
-  _buttons[_num_of_registered_buttons].button_cfg.press_mode = press_mode;
+  if (_num_of_registered_buttons >= NUM_OF_BUTTONS)
+  {
+    return false;
+  }
+  button_t *btn = &buttons[_num_of_registered_buttons];
+  btn->idx = _num_of_registered_buttons;
 
-  _buttons[_num_of_registered_buttons].button_state = BTN_STATE_IDLE;
-  _buttons[_num_of_registered_buttons].first_change_timestamp = 0;
-  _buttons[_num_of_registered_buttons].button_phy_state = get_button_pin_state(
-      &_buttons[_num_of_registered_buttons].button_cfg);
+  btn->button_cfg.gpio_port = port;
+  btn->button_cfg.gpio_pin = pin;
+  btn->button_cfg.press_mode = press_mode;
+
+  btn->button_state = BTN_STATE_IDLE;
+  btn->first_change_timestamp = 0;
+  btn->button_phy_state = get_button_pin_state(&btn->button_cfg);
 
   _num_of_registered_buttons++;
 
-  return &_buttons[_num_of_registered_buttons - 1];
+  return true;
+}
+
+/**
+ * @brief Return number of total registered buttons. Within range 0 ... NUM_OF_BUTTONS.
+ * @retval True integer value of number of buttons.
+ */
+uint8_t get_registered_buttons_num(void)
+{
+  return _num_of_registered_buttons;
 }
