@@ -66,7 +66,7 @@ void btn_on_press(button_t *btn)
  * @param btn Button configuration structure that triggered the event.
  * TODO: user can add actions on button events here.
  */
-void btn_on_press(button_t *btn)
+void btn_on_longpress(button_t *btn)
 {
   if ((btn->cfg.gpio_port == B1_GPIO_Port) && (btn->cfg.gpio_pin == B1_Pin))
   {
